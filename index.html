@@ -252,8 +252,29 @@
   "use strict";
 
   var KNOWN_EPISODES = [
+    { ep: 1, title: "不完美又怎樣！覺得「講日文很好玩！」才是最重要的！" },
     { ep: 2, title: "萬用日文「Dai jo-bu!」✨", url: "https://podcasts.apple.com/sg/podcast/ep-2-%E8%90%AC%E7%94%A8%E6%97%A5%E6%96%87-dai-jo-bu/id1841097463?i=1000727958025" },
+    {
+      ep: 3, title: "「大丈夫」的第二個用法「不用，謝謝」和禮貌表現「です（desu）」",
+      vocab: [
+        { front: "大丈夫", reading: "daijoubu", meaning: "不用，謝謝（大丈夫的第二種用法，婉拒別人時使用）" },
+        { front: "です", reading: "desu", meaning: "禮貌的斷定語尾，中文大概是「是～」" }
+      ]
+    },
+    {
+      ep: 4, title: "簡單自我介紹的日文「Watashi wa ○○desu（我是○○）」",
+      vocab: [
+        { front: "わたしは○○です", reading: "watashi wa ○○ desu", meaning: "我是○○（最基本的自我介紹句型）" }
+      ]
+    },
     { ep: 5, title: "感到很窩心的「Konnichiwa」「Arigatou」🤝🏻", url: "https://open.spotify.com/episode/3i26YLJc1rLt4v4NS4Ae6x" },
+    {
+      ep: 6, title: "吃飯時，過去說什麼？？「Gochiso-samadeshita」「Itadakimasu」🙏",
+      vocab: [
+        { front: "いただきます", reading: "itadakimasu", meaning: "我要開動了（也有感謝食物、感謝準備的人的意思）" },
+        { front: "ごちそうさまでした", reading: "gochisousama deshita", meaning: "我吃飽了（感謝食物，也感謝做飯或招待我的人）" }
+      ]
+    },
     { ep: 9, title: "從玩笑裡的日文學最快？「Bakayaro-!」👻", url: "https://open.spotify.com/episode/3TXcfmNRJw3IOQVrpeAqsi" },
     {
       ep: 10, title: "日本人幾乎不會用的「Sayo-nara」和常用的「Matane」👋🏻", url: "https://open.spotify.com/episode/0pQHG9RuDaw6bStkYhD4xU",
@@ -648,7 +669,8 @@
     if (!known) { mount.innerHTML = ""; return; }
     mount.innerHTML =
       '<div style="background:var(--accent-soft);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">' +
-      '<div class="muted">🔍 這是我們從網路公開的集數說明蒐集到的內容，<strong>不是官方逐字稿，也還沒有逐字核對過</strong>，請邊聽邊確認再收下：</div>' +
+      '<div class="muted">🔍 這是我們從網路公開的集數說明蒐集到的內容，<strong>不是官方逐字稿，也還沒有逐字核對過</strong>，請邊聽邊確認再收下：' +
+      (known.url ? ' <a href="' + escapeHtml(known.url) + '" target="_blank" rel="noopener">🎧 前往這集</a>' : "") + "</div>" +
       '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
       known.vocab.map(function (v, i) {
         return '<button type="button" class="btn btn-ghost btn-sm suggestion-chip" data-idx="' + i + '">＋ ' + escapeHtml(v.front) + "（" + escapeHtml(v.meaning) + "）</button>";
