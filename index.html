@@ -1,0 +1,1051 @@
+<title>日文修行帳</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root {
+    --bg: #FFF8F3;
+    --surface: #FFFFFF;
+    --surface-2: #FFEFE4;
+    --line: #F6DED0;
+    --ink: #4A3B36;
+    --ink-soft: #A0897F;
+    --accent: #FF8FAB;
+    --accent-strong: #F16D93;
+    --accent-soft: #FFE3EC;
+    --accent-2: #6FC79A;
+    --accent-2-soft: #E1F5EA;
+    --good: #4FAE7E;
+    --good-soft: #E1F5EA;
+    --warn: #F79A4E;
+    --warn-soft: #FFEBD6;
+    --shadow: 0 2px 8px rgba(255,143,171,0.18), 0 1px 3px rgba(74,59,54,0.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #251C2E;
+      --surface: #2F2438;
+      --surface-2: #3B2D46;
+      --line: #4B3A56;
+      --ink: #F5E9F0;
+      --ink-soft: #C4AFC7;
+      --accent: #FF9FBB;
+      --accent-strong: #FFBBD0;
+      --accent-soft: #4A2E3D;
+      --accent-2: #86DDB0;
+      --accent-2-soft: #24402F;
+      --good: #86DDB0;
+      --good-soft: #24402F;
+      --warn: #FFB877;
+      --warn-soft: #4A3420;
+      --shadow: 0 2px 10px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #251C2E;
+    --surface: #2F2438;
+    --surface-2: #3B2D46;
+    --line: #4B3A56;
+    --ink: #F5E9F0;
+    --ink-soft: #C4AFC7;
+    --accent: #FF9FBB;
+    --accent-strong: #FFBBD0;
+    --accent-soft: #4A2E3D;
+    --accent-2: #86DDB0;
+    --accent-2-soft: #24402F;
+    --good: #86DDB0;
+    --good-soft: #24402F;
+    --shadow: 0 2px 10px rgba(0,0,0,0.35), 0 1px 3px rgba(0,0,0,0.3);
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "Zen Maru Gothic", sans-serif;
+    padding-inline: 16px;
+    padding-block: 20px 48px;
+  }
+  .jp { font-family: "Zen Maru Gothic", "Noto Sans TC", sans-serif; }
+  .num { font-family: "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  a { color: var(--accent); }
+  button { font: inherit; color: inherit; }
+  input, textarea, select { font: inherit; color: inherit; }
+  .wrap { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+
+  header.app-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding-block: 4px 2px;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .brand h1 { font-family: "Zen Maru Gothic", sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: 0.02em; }
+  .brand .tagline { font-size: 0.78rem; color: var(--ink-soft); }
+  .brand .tagline a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; }
+  .streak-pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--warn-soft); color: var(--warn);
+    border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: 0.92rem; white-space: nowrap;
+    box-shadow: var(--shadow);
+  }
+
+  nav.tabs {
+    display: flex; gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  nav.tabs button {
+    background: none; border: 2px solid transparent; cursor: pointer; white-space: nowrap;
+    padding: 8px 16px; font-size: 0.92rem; font-weight: 600; color: var(--ink-soft);
+    border-radius: 999px; transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  nav.tabs button:hover { background: var(--accent-soft); transform: translateY(-1px); }
+  nav.tabs button.active { color: var(--accent-strong); background: var(--accent-soft); border-color: var(--accent); font-weight: 700; }
+  nav.tabs button .badge {
+    display: inline-block; margin-left: 5px; background: var(--warn); color: #fff;
+    border-radius: 999px; font-size: 0.68rem; padding: 1px 6px; font-family: "JetBrains Mono", monospace;
+  }
+
+  main#content {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+    padding: 22px; box-shadow: var(--shadow);
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 27px, var(--accent-soft) 28px);
+    background-size: 100% 28px;
+    background-position: 0 6px;
+  }
+  main#content > * { background: var(--surface); }
+  .section-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+  .muted { color: var(--ink-soft); font-size: 0.85rem; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 0.8rem; color: var(--ink-soft); font-weight: 500; }
+  .field input[type="text"], .field input[type="date"], .field textarea, .field select {
+    background: var(--surface-2); border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 9px 12px; width: 100%; color: var(--ink); transition: border-color 0.15s ease;
+  }
+  .field input:hover, .field textarea:hover { border-color: var(--accent); }
+  .field input:focus, .field textarea:focus, .field select:focus, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 1px;
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > .field { flex: 1 1 160px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    border-radius: 999px; padding: 9px 18px; font-weight: 700; font-size: 0.88rem; border: 2px solid transparent;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn:hover { transform: translateY(-1px) scale(1.03); }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow); }
+  .btn-primary:hover { background: var(--accent-strong); }
+  .btn-ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }
+  .btn-ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .btn-danger { background: transparent; border-color: var(--warn); color: var(--warn); }
+  .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+
+  .vocab-row, .grammar-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 8px; align-items: end;
+    padding: 12px; margin-bottom: 8px; background: var(--surface-2); border-radius: 14px; border: 1.5px dashed var(--line);
+  }
+  .grammar-row { grid-template-columns: 1fr 2fr auto; }
+  @media (max-width: 640px) {
+    .vocab-row, .grammar-row { grid-template-columns: 1fr; }
+  }
+  .remove-row { background: none; border: none; color: var(--warn); cursor: pointer; font-size: 1.1rem; padding: 6px; border-radius: 999px; }
+  .remove-row:hover { background: var(--warn-soft); }
+
+  .entry-card {
+    border: 1.5px solid var(--line); border-radius: 16px; padding: 14px 16px; background: var(--surface);
+    display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow);
+  }
+  .entry-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; cursor: pointer; }
+  .entry-date { font-weight: 700; }
+  .entry-meta { font-size: 0.78rem; color: var(--ink-soft); }
+  .entry-body { display: none; flex-direction: column; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line); }
+  .entry-card.open .entry-body { display: flex; }
+  .chip { display: inline-block; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 10px; font-size: 0.74rem; font-weight: 600; }
+  .vocab-list-item { display: flex; gap: 8px; flex-wrap: baseline; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .vocab-list-item:last-child { border-bottom: none; }
+  .vocab-jp { font-family: "Zen Maru Gothic"; font-weight: 700; }
+  .vocab-reading { color: var(--ink-soft); font-size: 0.82rem; }
+  .vocab-meaning { flex: 1; }
+  .vocab-example { color: var(--ink-soft); font-size: 0.82rem; font-style: italic; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .stat-tile { background: var(--surface-2); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; border: 1.5px solid var(--line); }
+  .stat-tile .num { font-size: 1.6rem; font-weight: 700; color: var(--accent-strong); }
+  .stat-tile .label { font-size: 0.76rem; color: var(--ink-soft); }
+
+  .heatmap { display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 3px; overflow-x: auto; padding-bottom: 4px; }
+  .heatmap .cell { width: 14px; height: 14px; border-radius: 5px; background: var(--surface-2); }
+  .heatmap .cell.t1 { background: var(--accent-soft); }
+  .heatmap .cell.t2 { background: color-mix(in srgb, var(--accent) 55%, var(--surface-2)); }
+  .heatmap .cell.t3 { background: var(--accent); }
+  .heatmap .cell.future { visibility: hidden; }
+
+  .flashcard-stage { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 10px 0 4px; }
+  .flip-card { width: 100%; max-width: 420px; height: 220px; perspective: 1200px; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.45s cubic-bezier(.3,.1,.3,1); }
+  .flip-card.revealed .flip-inner { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 22px; border: 1.5px solid var(--line); background: var(--surface-2); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 18px; gap: 8px; box-shadow: var(--shadow); }
+  .flip-face.back { transform: rotateY(180deg); }
+  .flip-front-word { font-family: "Zen Maru Gothic"; font-weight: 700; font-size: 1.9rem; }
+  .flip-back-reading { color: var(--ink-soft); font-size: 0.95rem; }
+  .flip-back-meaning { font-weight: 700; font-size: 1.3rem; }
+  .flip-back-example { color: var(--ink-soft); font-size: 0.85rem; max-width: 320px; }
+  .flip-hint { font-size: 0.72rem; color: var(--ink-soft); }
+  .grade-btns { display: flex; gap: 8px; }
+  .grade-btn { flex: 1; border-radius: 999px; padding: 10px 14px; font-weight: 700; font-size: 0.85rem; border: 1.5px solid var(--line); cursor: pointer; background: var(--surface-2); transition: transform 0.15s ease; }
+  .grade-btn:hover { transform: translateY(-1px) scale(1.03); }
+  .grade-btn:active { transform: scale(0.96); }
+  .grade-again { color: var(--warn); }
+  .grade-good { color: var(--accent-strong); }
+  .grade-easy { color: var(--good); }
+
+  .card-manager-table { display: flex; flex-direction: column; gap: 6px; }
+  .cm-row { display: grid; grid-template-columns: 1.1fr 1fr 1.4fr 0.9fr auto; gap: 8px; align-items: center; padding: 10px 12px; background: var(--surface-2); border-radius: 14px; font-size: 0.85rem; }
+  .cm-row [contenteditable="true"] { padding: 3px 6px; border-radius: 8px; }
+  .cm-row [contenteditable="true"]:focus { background: var(--accent-soft); outline: none; }
+  .cm-due { font-size: 0.74rem; color: var(--ink-soft); }
+  @media (max-width: 640px) { .cm-row { grid-template-columns: 1fr; } }
+
+  .quiz-modes { display: flex; gap: 8px; }
+  .quiz-modes button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-option { text-align: left; padding: 12px 16px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--surface-2); cursor: pointer; transition: transform 0.12s ease, background 0.12s ease; }
+  .quiz-option:hover:not(:disabled) { background: var(--accent-soft); transform: translateX(2px); }
+  .quiz-option.correct { background: var(--good-soft); border-color: var(--good); color: var(--good); font-weight: 700; }
+  .quiz-option.wrong { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+  .quiz-progress { font-size: 0.8rem; color: var(--ink-soft); }
+  .quiz-q-jp { font-family: "Zen Maru Gothic"; font-size: 1.6rem; font-weight: 700; text-align: center; padding: 16px 0; }
+  .typing-feedback { border-radius: 14px; padding: 12px 16px; font-size: 0.9rem; }
+  .typing-feedback.ok { background: var(--good-soft); color: var(--good); }
+  .typing-feedback.no { background: var(--warn-soft); color: var(--warn); }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+    font-size: 0.85rem; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
+
+  .empty-state { text-align: center; padding: 30px 10px; color: var(--ink-soft); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .search-box { width: 100%; }
+  @media (prefers-reduced-motion: reduce) { .flip-inner, .toast { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="app-header">
+    <div class="brand">
+      <h1>📔 日文修行帳 ✨</h1>
+      <div class="tagline">紀錄每天聽<a href="https://open.spotify.com/show/1yO2RxQfkatCyI8lzRWOBe" target="_blank" rel="noopener">「無壓力學日文 with yuma」</a>學到的東西</div>
+    </div>
+    <div class="streak-pill" id="streak-pill">🌱 -</div>
+  </header>
+
+  <nav class="tabs" id="tabs"></nav>
+  <main id="content"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var KNOWN_EPISODES = [
+    { ep: 2, title: "萬用日文「Dai jo-bu!」✨", url: "https://podcasts.apple.com/sg/podcast/ep-2-%E8%90%AC%E7%94%A8%E6%97%A5%E6%96%87-dai-jo-bu/id1841097463?i=1000727958025" },
+    { ep: 5, title: "感到很窩心的「Konnichiwa」「Arigatou」🤝🏻", url: "https://open.spotify.com/episode/3i26YLJc1rLt4v4NS4Ae6x" },
+    { ep: 9, title: "從玩笑裡的日文學最快？「Bakayaro-!」👻", url: "https://open.spotify.com/episode/3TXcfmNRJw3IOQVrpeAqsi" },
+    { ep: 10, title: "日本人幾乎不會用的「Sayo-nara」和常用的「Matane」👋🏻", url: "https://open.spotify.com/episode/0pQHG9RuDaw6bStkYhD4xU" },
+    { ep: 11, title: "「日文50音」是什麼？平假名、片假名又是怎麼樣的呢？👀", url: "https://open.spotify.com/episode/5ncleeHa1mBjenPiN9Wxva" },
+    { ep: 25, title: "結帳日文的10個關鍵單字🔑💳", url: "https://podcasts.apple.com/jp/podcast/ep-25-%E7%B5%90%E5%B8%B3%E6%97%A5%E6%96%87%E7%9A%8410%E5%80%8B%E9%97%9C%E9%8D%B5%E5%96%AE%E5%AD%97/id1841097463?i=1000737006072&l=en-US" },
+    { ep: 46, title: "「可以跟你一起拍照嗎」日文怎麼說？「写真、一緒にいいですか」", url: "https://podcasts.apple.com/tw/podcast/ep-46-%E5%8F%AF%E4%BB%A5%E8%B7%9F%E4%BD%A0%E4%B8%80%E8%B5%B7%E6%8B%8D%E7%85%A7%E5%97%8E-%E6%97%A5%E6%96%87%E6%80%8E%E9%BA%BC%E8%AA%AA-%E5%86%99%E7%9C%9F-%E4%B8%80%E7%B7%92%E3%81%AB%E3%81%84%E3%81%84%E3%81%A7%E3%81%99%E3%81%8B-shashin-isshoni-i-desuka/id1841097463?i=1000745667643&l=en-GB" },
+    { ep: 69, title: "【便利商店篇①】最簡單的「請給我」的日文「ください」怎麼用？🤲🏻", url: "https://creators.spotify.com/pod/profile/yuma565/episodes/Ep-69-e3gts68" },
+    { ep: 71, title: "【單字聽聽看🎧#4】日式飯糰口味篇🍙", url: "https://podcasts.apple.com/hk/podcast/ep-71-%E5%96%AE%E5%AD%97%E8%81%BD%E8%81%BD%E7%9C%8B-4-%E6%97%A5%E5%BC%8F%E9%A3%AF%E7%B3%B0%E5%8F%A3%E5%91%B3%E7%AF%87-yuma%E6%8E%A8%E8%96%A6-%E6%9C%80%E5%B8%B8%E7%94%A810%E5%80%8B%E5%96%AE%E5%AD%97-%E4%BE%8B%E5%8F%A5/id1841097463?i=1000758105908&l=en-GB" }
+  ];
+
+  var STORAGE_KEY = "nihongo-shugyou-cho:v1";
+  var TABS = [
+    { key: "today", label: "今日紀錄" },
+    { key: "review", label: "回顧" },
+    { key: "cards", label: "單字卡" },
+    { key: "quiz", label: "小測驗" },
+    { key: "stats", label: "統計" }
+  ];
+
+  var state = { entries: {}, cards: {}, quizzes: {} };
+  var backend = null;
+  var dbApi = null;
+  var downloadsApi = null;
+  var activeTab = "today";
+  var todayFormDate = localDateStr();
+  var flashQueue = [];
+  var flashIndex = 0;
+  var quizMode = "choice";
+  var quiz = null;
+
+  function localDateStr(d) {
+    d = d || new Date();
+    var y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+  function addDays(dateStr, n) {
+    var d = new Date(dateStr + "T00:00:00");
+    d.setDate(d.getDate() + n);
+    return localDateStr(d);
+  }
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function normalize(s) {
+    return String(s || "").trim().toLowerCase().replace(/[\s　]+/g, "").replace(/[!！?？。.、,，~〜]/g, "");
+  }
+  function weekdayLabel(dateStr) {
+    var days = ["日", "一", "二", "三", "四", "五", "六"];
+    var d = new Date(dateStr + "T00:00:00");
+    return "週" + days[d.getDay()];
+  }
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        state.entries = parsed.entries || {};
+        state.cards = parsed.cards || {};
+        state.quizzes = parsed.quizzes || {};
+      }
+    } catch (e) { /* corrupted or unavailable local storage: start fresh */ }
+  }
+  function saveLocal() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable, e.g. private mode */ }
+  }
+
+  async function writeDoc(col, id, data) {
+    if (backend === "db") {
+      await dbApi.collection(col).doc(id).set(data);
+    } else {
+      state[col][id] = data;
+      saveLocal();
+      renderReactive();
+    }
+  }
+  async function deleteDocFn(col, id) {
+    if (backend === "db") {
+      await dbApi.collection(col).doc(id).delete();
+    } else {
+      delete state[col][id];
+      saveLocal();
+      renderReactive();
+    }
+  }
+
+  function renderReactive() {
+    updateStreakPill();
+    updateTabBadge();
+    if (activeTab === "review") renderReview();
+    if (activeTab === "stats") renderStats();
+    if (activeTab === "cards") renderCardManagerOnly();
+  }
+
+  async function init() {
+    renderTabs();
+    renderContent();
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        dbApi = await window.claude.use("db");
+      }
+    } catch (e) { dbApi = null; }
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        downloadsApi = await window.claude.use("downloads");
+      }
+    } catch (e) { downloadsApi = null; }
+
+    if (dbApi) {
+      backend = "db";
+      subscribeDb();
+    } else {
+      backend = "local";
+      loadLocal();
+      renderContent();
+      renderReactive();
+    }
+  }
+
+  function subscribeDb() {
+    dbApi.collection("entries").onSnapshot(function (snap) {
+      var next = {};
+      snap.docs.forEach(function (d) { next[d.id] = d.data(); });
+      state.entries = next;
+      renderReactive();
+    }, function () { toast("同步發生問題，改用本機儲存"); backend = "local"; loadLocal(); renderContent(); renderReactive(); });
+
+    dbApi.collection("cards").onSnapshot(function (snap) {
+      var next = {};
+      snap.docs.forEach(function (d) { next[d.id] = d.data(); });
+      state.cards = next;
+      renderReactive();
+    }, function () {});
+
+    dbApi.collection("quizzes").onSnapshot(function (snap) {
+      var next = {};
+      snap.docs.forEach(function (d) { next[d.id] = d.data(); });
+      state.quizzes = next;
+      renderReactive();
+    }, function () {});
+  }
+
+  function mascotForStreak(n) {
+    if (n <= 0) return "🌱";
+    if (n < 3) return "🐣";
+    if (n < 7) return "🐥";
+    if (n < 14) return "🐤";
+    if (n < 30) return "🦊";
+    return "👑";
+  }
+  function updateStreakPill() {
+    var s = computeStreak();
+    document.getElementById("streak-pill").innerHTML =
+      mascotForStreak(s.current) + " <span class='num'>" + s.current + "</span> 天" + (s.loggedToday ? "" : "<span class='muted' style='margin-left:4px'>（今天還沒記錄）</span>");
+  }
+  function updateTabBadge() {
+    var due = dueCards().length;
+    var btn = document.querySelector('nav.tabs button[data-tab="cards"]');
+    if (btn) btn.innerHTML = "單字卡" + (due > 0 ? " <span class='badge'>" + due + "</span>" : "");
+  }
+
+  function computeStreak() {
+    var dates = Object.keys(state.entries);
+    if (!dates.length) return { current: 0, longest: 0, loggedToday: false };
+    var set = {};
+    dates.forEach(function (d) { set[d] = true; });
+    var today = localDateStr();
+    var cursor = set[today] ? today : addDays(today, -1);
+    var current = 0;
+    while (set[cursor]) { current++; cursor = addDays(cursor, -1); }
+    var asc = dates.slice().sort();
+    var longest = 0, run = 0, prev = null;
+    asc.forEach(function (d) {
+      run = (prev && addDays(prev, 1) === d) ? run + 1 : 1;
+      longest = Math.max(longest, run);
+      prev = d;
+    });
+    return { current: current, longest: longest, loggedToday: !!set[today] };
+  }
+
+  function dueCards() {
+    var today = localDateStr();
+    return Object.values(state.cards).filter(function (c) { return c.srs.due <= today; })
+      .sort(function (a, b) { return a.srs.due < b.srs.due ? -1 : 1; });
+  }
+
+  function applySrsGrade(card, grade) {
+    var srs = Object.assign({}, card.srs);
+    var today = localDateStr();
+    if (grade === "again") {
+      srs.reps = 0;
+      srs.interval = 1;
+      srs.ease = Math.max(1.3, srs.ease - 0.2);
+    } else if (grade === "good") {
+      srs.reps += 1;
+      srs.interval = srs.reps === 1 ? 1 : (srs.reps === 2 ? 3 : Math.round(srs.interval * srs.ease));
+      if (srs.interval < 1) srs.interval = 1;
+    } else if (grade === "easy") {
+      srs.reps += 1;
+      srs.interval = srs.reps === 1 ? 2 : Math.round(srs.interval * srs.ease * 1.3);
+      srs.ease += 0.15;
+    }
+    srs.due = addDays(today, srs.interval);
+    srs.lastReviewed = today;
+    return Object.assign({}, card, { srs: srs });
+  }
+
+  function upsertCardFromRow(front, reading, meaning, example, tag, sourceDate, sourceEpisode) {
+    front = front.trim();
+    if (!front) return;
+    var existing = Object.values(state.cards).find(function (c) {
+      return c.tag === tag && normalize(c.front) === normalize(front);
+    });
+    if (existing) {
+      var updated = Object.assign({}, existing, { reading: reading, meaning: meaning, example: example, sourceDate: sourceDate, sourceEpisode: sourceEpisode });
+      writeDoc("cards", existing.id, updated);
+    } else {
+      var id = genId();
+      var card = {
+        id: id, front: front, reading: reading, meaning: meaning, example: example, tag: tag,
+        sourceDate: sourceDate, sourceEpisode: sourceEpisode,
+        srs: { ease: 2.5, interval: 0, reps: 0, due: localDateStr(), lastReviewed: null }
+      };
+      writeDoc("cards", id, card);
+    }
+  }
+
+  function renderTabs() {
+    var nav = document.getElementById("tabs");
+    nav.innerHTML = TABS.map(function (t) {
+      return '<button data-tab="' + t.key + '" class="' + (t.key === activeTab ? "active" : "") + '">' + escapeHtml(t.label) + "</button>";
+    }).join("");
+    nav.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-tab]");
+      if (!btn) return;
+      activeTab = btn.getAttribute("data-tab");
+      renderTabs();
+      renderContent();
+    });
+  }
+
+  function renderContent() {
+    var c = document.getElementById("content");
+    if (activeTab === "today") { renderTodayTab(c); }
+    else if (activeTab === "review") { renderReviewTab(c); }
+    else if (activeTab === "cards") { renderCardsTab(c); }
+    else if (activeTab === "quiz") { renderQuizTab(c); }
+    else if (activeTab === "stats") { renderStatsTab(c); }
+    updateStreakPill();
+    updateTabBadge();
+  }
+
+  // ---------- Today tab ----------
+  function renderTodayTab(c) {
+    var entry = state.entries[todayFormDate];
+    var datalist = KNOWN_EPISODES.map(function (e) {
+      return '<option value="Ep.' + e.ep + '：' + escapeHtml(e.title) + '">';
+    }).join("");
+
+    c.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:16px">' +
+      '<div class="row">' +
+        '<div class="field" style="max-width:200px">' +
+          '<label for="f-date">日期</label>' +
+          '<input type="date" id="f-date" value="' + todayFormDate + '">' +
+        '</div>' +
+        '<div class="field" style="flex:2 1 260px">' +
+          '<label for="f-episode">這集是？（可選）</label>' +
+          '<input type="text" id="f-episode" list="episode-list" placeholder="例如：Ep.12：...　或直接空白" value="' + escapeHtml(entry && entry.episode || "") + '">' +
+          '<datalist id="episode-list">' + datalist + "</datalist>" +
+        '</div>' +
+      '</div>' +
+      '<p class="muted" style="margin-top:-8px">上面是我們在網路上找到的公開集數標題，僅供快速參考，不是逐字稿——實際內容還是要靠你自己聽寫下來喔。</p>' +
+
+      '<div>' +
+        '<div class="section-title">🈴 今天學的單字 / 短句</div>' +
+        '<div id="vocab-rows"></div>' +
+        '<button class="btn btn-ghost btn-sm" id="add-vocab" style="margin-top:8px">＋ 新增單字</button>' +
+      '</div>' +
+
+      '<div>' +
+        '<div class="section-title">📎 今天學的文法 / 句型</div>' +
+        '<div id="grammar-rows"></div>' +
+        '<button class="btn btn-ghost btn-sm" id="add-grammar" style="margin-top:8px">＋ 新增文法</button>' +
+      '</div>' +
+
+      '<div class="field">' +
+        '<label for="f-notes">其他心得筆記</label>' +
+        '<textarea id="f-notes" placeholder="今天聽的感想、發音重點、想再確認的地方...">' + escapeHtml(entry && entry.notes || "") + "</textarea>" +
+      '</div>' +
+
+      '<div style="display:flex;gap:10px;align-items:center">' +
+        '<button class="btn btn-primary" id="save-entry">儲存今天的紀錄</button>' +
+        (entry ? '<span class="muted">這一天已經有紀錄了，儲存會更新它</span>' : "") +
+      "</div>" +
+      "</div>";
+
+    var vocabContainer = document.getElementById("vocab-rows");
+    var grammarContainer = document.getElementById("grammar-rows");
+    var vocabList = entry && entry.vocab && entry.vocab.length ? entry.vocab : [{}];
+    var grammarList = entry && entry.grammar && entry.grammar.length ? entry.grammar : [{}];
+    vocabList.forEach(function (v) { addVocabRow(vocabContainer, v); });
+    grammarList.forEach(function (g) { addGrammarRow(grammarContainer, g); });
+
+    document.getElementById("f-date").addEventListener("change", function (e) {
+      todayFormDate = e.target.value || localDateStr();
+      renderTodayTab(c);
+    });
+    document.getElementById("add-vocab").addEventListener("click", function () { addVocabRow(vocabContainer, {}); });
+    document.getElementById("add-grammar").addEventListener("click", function () { addGrammarRow(grammarContainer, {}); });
+    document.getElementById("save-entry").addEventListener("click", function () { saveTodayEntry(vocabContainer, grammarContainer); });
+  }
+
+  function addVocabRow(container, v) {
+    var row = document.createElement("div");
+    row.className = "vocab-row";
+    row.innerHTML =
+      '<div class="field"><label>🌸 日文</label><input type="text" class="v-front jp" value="' + escapeHtml(v.front || "") + '" placeholder="単語"></div>' +
+      '<div class="field"><label>讀音</label><input type="text" class="v-reading" value="' + escapeHtml(v.reading || "") + '" placeholder="假名 / 羅馬拼音"></div>' +
+      '<div class="field"><label>中文意思</label><input type="text" class="v-meaning" value="' + escapeHtml(v.meaning || "") + '" placeholder="意思"></div>' +
+      '<div class="field"><label>例句</label><input type="text" class="v-example" value="' + escapeHtml(v.example || "") + '" placeholder="例句（可選）"></div>' +
+      '<button class="remove-row" type="button" title="刪除">✕</button>';
+    row.querySelector(".remove-row").addEventListener("click", function () { row.remove(); });
+    container.appendChild(row);
+  }
+  function addGrammarRow(container, g) {
+    var row = document.createElement("div");
+    row.className = "grammar-row";
+    row.innerHTML =
+      '<div class="field"><label>🍀 文法點</label><input type="text" class="g-point jp" value="' + escapeHtml(g.point || "") + '" placeholder="例：〜てください"></div>' +
+      '<div class="field"><label>說明 / 例句</label><input type="text" class="g-explain" value="' + escapeHtml(g.explanation || "") + '" placeholder="用法說明或例句"></div>' +
+      '<button class="remove-row" type="button" title="刪除">✕</button>';
+    row.querySelector(".remove-row").addEventListener("click", function () { row.remove(); });
+    container.appendChild(row);
+  }
+
+  function saveTodayEntry(vocabContainer, grammarContainer) {
+    var episode = document.getElementById("f-episode").value.trim();
+    var notes = document.getElementById("f-notes").value.trim();
+    var vocab = [];
+    vocabContainer.querySelectorAll(".vocab-row").forEach(function (row) {
+      var front = row.querySelector(".v-front").value.trim();
+      if (!front) return;
+      vocab.push({
+        front: front,
+        reading: row.querySelector(".v-reading").value.trim(),
+        meaning: row.querySelector(".v-meaning").value.trim(),
+        example: row.querySelector(".v-example").value.trim()
+      });
+    });
+    var grammar = [];
+    grammarContainer.querySelectorAll(".grammar-row").forEach(function (row) {
+      var point = row.querySelector(".g-point").value.trim();
+      if (!point) return;
+      grammar.push({ point: point, explanation: row.querySelector(".g-explain").value.trim() });
+    });
+    if (!vocab.length && !grammar.length && !notes && !episode) {
+      toast("這天還沒有內容可以儲存喔");
+      return;
+    }
+    var entry = { date: todayFormDate, episode: episode, vocab: vocab, grammar: grammar, notes: notes, updatedAt: new Date().toISOString() };
+    writeDoc("entries", todayFormDate, entry).then(function () {
+      var cardCount = 0;
+      vocab.forEach(function (v) {
+        upsertCardFromRow(v.front, v.reading, v.meaning, v.example, "vocab", todayFormDate, episode);
+        cardCount++;
+      });
+      grammar.forEach(function (g) {
+        upsertCardFromRow(g.point, "", g.explanation, "", "grammar", todayFormDate, episode);
+        cardCount++;
+      });
+      toast("已儲存！同步了 " + cardCount + " 張單字卡");
+      renderReactive();
+    });
+  }
+
+  // ---------- Review tab ----------
+  function renderReviewTab(c) {
+    c.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+      '<div class="section-title">回顧</div>' +
+      '<input type="text" id="review-search" class="field search-box" placeholder="搜尋單字、文法或筆記..." style="background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px">' +
+      '<div id="review-list"></div>' +
+      "</div>";
+    document.getElementById("review-search").addEventListener("input", function (e) { renderReview(e.target.value); });
+    renderReview("");
+  }
+  function renderReview(query) {
+    var list = document.getElementById("review-list");
+    if (!list) return;
+    query = (query || (document.getElementById("review-search") ? document.getElementById("review-search").value : "") || "").trim().toLowerCase();
+    var dates = Object.keys(state.entries).sort().reverse();
+    var filtered = dates.filter(function (d) {
+      if (!query) return true;
+      var e = state.entries[d];
+      var hay = [e.episode, e.notes].concat((e.vocab || []).map(function (v) { return v.front + " " + v.meaning + " " + v.reading; }))
+        .concat((e.grammar || []).map(function (g) { return g.point + " " + g.explanation; })).join(" ").toLowerCase();
+      return hay.indexOf(query) !== -1;
+    });
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty-state"><div style="font-size:1.6rem">📭</div><div>' + (dates.length ? "沒有符合的紀錄" : "還沒有任何紀錄，去「今日紀錄」開始寫第一篇吧") + "</div></div>";
+      return;
+    }
+    list.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">' + filtered.map(function (d) { return renderEntryCard(d, state.entries[d]); }).join("") + "</div>";
+    list.querySelectorAll(".entry-head").forEach(function (h) {
+      h.addEventListener("click", function () { h.closest(".entry-card").classList.toggle("open"); });
+    });
+  }
+  function renderEntryCard(date, e) {
+    var vocabCount = (e.vocab || []).length, grammarCount = (e.grammar || []).length;
+    var vocabHtml = (e.vocab || []).map(function (v) {
+      return '<div class="vocab-list-item"><span class="vocab-jp">' + escapeHtml(v.front) + '</span>' +
+        (v.reading ? '<span class="vocab-reading">' + escapeHtml(v.reading) + "</span>" : "") +
+        '<span class="vocab-meaning">' + escapeHtml(v.meaning) + "</span>" +
+        (v.example ? '<span class="vocab-example">' + escapeHtml(v.example) + "</span>" : "") + "</div>";
+    }).join("");
+    var grammarHtml = (e.grammar || []).map(function (g) {
+      return '<div class="vocab-list-item"><span class="vocab-jp">' + escapeHtml(g.point) + '</span><span class="vocab-meaning">' + escapeHtml(g.explanation) + "</span></div>";
+    }).join("");
+    return '<div class="entry-card">' +
+      '<div class="entry-head"><div><div class="entry-date">' + date + " · " + weekdayLabel(date) + "</div>" +
+      '<div class="entry-meta">' + (e.episode ? escapeHtml(e.episode) : "沒有標記集數") + "</div></div>" +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+      (vocabCount ? '<span class="chip">單字 ' + vocabCount + "</span>" : "") +
+      (grammarCount ? '<span class="chip">文法 ' + grammarCount + "</span>" : "") +
+      "</div></div>" +
+      '<div class="entry-body">' + vocabHtml + grammarHtml +
+      (e.notes ? '<div class="muted" style="white-space:pre-wrap">' + escapeHtml(e.notes) + "</div>" : "") +
+      "</div></div>";
+  }
+
+  // ---------- Cards tab (flashcards + manager) ----------
+  function renderCardsTab(c) {
+    var due = dueCards();
+    flashQueue = due;
+    flashIndex = 0;
+    c.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:20px">' +
+      '<div>' +
+        '<div class="section-title">單字卡複習</div>' +
+        '<div class="muted" id="due-summary"></div>' +
+      '</div>' +
+      '<div id="flash-area"></div>' +
+      '<div>' +
+        '<div class="section-title">所有單字卡</div>' +
+        '<div class="muted">點一下欄位可以直接修改；🔄 重設複習進度、🗑 刪除</div>' +
+        '<div id="card-manager"></div>' +
+      "</div>" +
+      "</div>";
+    renderFlashArea();
+    renderCardManagerOnly();
+  }
+  function renderCardManagerOnly() {
+    var mount = document.getElementById("card-manager");
+    if (!mount) return;
+    var cards = Object.values(state.cards).sort(function (a, b) { return a.srs.due < b.srs.due ? -1 : 1; });
+    if (!cards.length) {
+      mount.innerHTML = '<div class="empty-state">還沒有任何單字卡，先去「今日紀錄」新增一些單字吧</div>';
+      return;
+    }
+    mount.innerHTML = '<div class="card-manager-table">' + cards.map(function (card) {
+      return '<div class="cm-row" data-id="' + card.id + '">' +
+        '<div class="jp" contenteditable="true" data-field="front">' + escapeHtml(card.front) + "</div>" +
+        '<div contenteditable="true" data-field="reading">' + escapeHtml(card.reading || "") + "</div>" +
+        '<div contenteditable="true" data-field="meaning">' + escapeHtml(card.meaning || "") + "</div>" +
+        '<div class="cm-due">' + (card.srs.due <= localDateStr() ? "📌 今天到期" : "下次 " + card.srs.due) + '　<span class="chip">' + (card.tag === "grammar" ? "文法" : "單字") + "</span></div>" +
+        '<div style="display:flex;gap:4px"><button class="btn btn-ghost btn-sm reset-card" title="重設進度">🔄</button><button class="btn btn-danger btn-sm delete-card" title="刪除">🗑</button></div>' +
+        "</div>";
+    }).join("") + "</div>";
+
+    mount.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
+      el.addEventListener("blur", function () {
+        var row = el.closest(".cm-row");
+        var id = row.getAttribute("data-id");
+        var card = state.cards[id];
+        if (!card) return;
+        var field = el.getAttribute("data-field");
+        var val = el.textContent.trim();
+        if (val === (card[field] || "")) return;
+        var updated = Object.assign({}, card);
+        updated[field] = val;
+        writeDoc("cards", id, updated);
+      });
+    });
+    mount.querySelectorAll(".reset-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var row = btn.closest(".cm-row");
+        var id = row.getAttribute("data-id");
+        var card = state.cards[id];
+        if (!card) return;
+        var updated = Object.assign({}, card, { srs: { ease: 2.5, interval: 0, reps: 0, due: localDateStr(), lastReviewed: null } });
+        writeDoc("cards", id, updated).then(function () { toast("已重設這張卡的複習進度"); });
+      });
+    });
+    mount.querySelectorAll(".delete-card").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var row = btn.closest(".cm-row");
+        var id = row.getAttribute("data-id");
+        if (!confirm("確定要刪除這張單字卡嗎？")) return;
+        deleteDocFn("cards", id).then(function () { toast("已刪除"); });
+      });
+    });
+  }
+  function renderFlashArea() {
+    var area = document.getElementById("flash-area");
+    var summary = document.getElementById("due-summary");
+    if (!area) return;
+    if (flashIndex >= flashQueue.length) {
+      summary.textContent = Object.keys(state.cards).length ? "" : "";
+      if (!flashQueue.length) {
+        area.innerHTML = '<div class="empty-state"><div style="font-size:1.8rem">🎉</div><div>今天沒有到期的單字卡</div><div class="muted">總共有 ' + Object.keys(state.cards).length + " 張卡片</div></div>";
+      } else {
+        area.innerHTML = '<div class="empty-state"><div style="font-size:1.8rem">✅</div><div>今天的複習都完成了！</div></div>';
+      }
+      return;
+    }
+    summary.textContent = "今天要複習 " + flashQueue.length + " 張，還剩 " + (flashQueue.length - flashIndex) + " 張";
+    var card = flashQueue[flashIndex];
+    area.innerHTML =
+      '<div class="flashcard-stage">' +
+      '<div class="flip-card" id="flip-card">' +
+        '<div class="flip-inner">' +
+          '<div class="flip-face front"><div class="flip-front-word">' + escapeHtml(card.front) + '</div><div class="flip-hint">點卡片看答案</div></div>' +
+          '<div class="flip-face back">' +
+            (card.reading ? '<div class="flip-back-reading">' + escapeHtml(card.reading) + "</div>" : "") +
+            '<div class="flip-back-meaning">' + escapeHtml(card.meaning) + "</div>" +
+            (card.example ? '<div class="flip-back-example">' + escapeHtml(card.example) + "</div>" : "") +
+          "</div>" +
+        "</div>" +
+      "</div>" +
+      '<div class="grade-btns" id="grade-btns" style="display:none;max-width:420px;width:100%">' +
+        '<button class="grade-btn grade-again" data-grade="again">忘記了</button>' +
+        '<button class="grade-btn grade-good" data-grade="good">記得</button>' +
+        '<button class="grade-btn grade-easy" data-grade="easy">很熟悉</button>' +
+      "</div>" +
+      "</div>";
+    var flip = document.getElementById("flip-card");
+    var gradeBtns = document.getElementById("grade-btns");
+    flip.addEventListener("click", function () {
+      flip.classList.toggle("revealed");
+      gradeBtns.style.display = flip.classList.contains("revealed") ? "flex" : "none";
+    });
+    gradeBtns.querySelectorAll("[data-grade]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var grade = btn.getAttribute("data-grade");
+        var updated = applySrsGrade(card, grade);
+        writeDoc("cards", card.id, updated).then(function () {
+          flashIndex++;
+          renderFlashArea();
+        });
+      });
+    });
+  }
+
+  // ---------- Quiz tab ----------
+  function buildQuiz(n, mode) {
+    var all = Object.values(state.cards);
+    if (all.length < 4) return null;
+    var today = localDateStr();
+    var due = all.filter(function (c) { return c.srs.due <= today; });
+    var pool = due.length >= n ? shuffle(due).slice(0, n) : (function () {
+      var rest = shuffle(all.filter(function (c) { return due.indexOf(c) === -1; }));
+      return shuffle(due.concat(rest)).slice(0, Math.min(n, all.length));
+    })();
+    return pool.map(function (card) {
+      if (mode === "typing") {
+        var askFront = Math.random() < 0.5;
+        return {
+          cardId: card.id, type: "typing", askFront: askFront,
+          prompt: askFront ? card.meaning : card.front,
+          hint: askFront ? null : card.reading,
+          answer: askFront ? card.front : card.meaning,
+          altAnswer: askFront ? card.reading : null
+        };
+      }
+      var distractors = shuffle(all.filter(function (c) { return c.id !== card.id; })).slice(0, 3).map(function (c) { return c.meaning || "（無意思）"; });
+      var options = shuffle([card.meaning || "（無意思）"].concat(distractors));
+      return { cardId: card.id, type: "choice", front: card.front, reading: card.reading, options: options, answer: card.meaning || "（無意思）" };
+    });
+  }
+
+  function renderQuizTab(c) {
+    var recent = Object.values(state.quizzes).sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 5);
+    c.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:16px">' +
+      '<div class="section-title">小測驗</div>' +
+      '<div class="quiz-modes">' +
+        '<button class="btn btn-ghost btn-sm' + (quizMode === "choice" ? " active" : "") + '" data-mode="choice">選擇題</button>' +
+        '<button class="btn btn-ghost btn-sm' + (quizMode === "typing" ? " active" : "") + '" data-mode="typing">打字題</button>' +
+      "</div>" +
+      '<div id="quiz-area"></div>' +
+      (recent.length ? '<div><div class="section-title" style="font-size:0.9rem">最近測驗紀錄</div><div style="display:flex;flex-direction:column;gap:4px">' +
+        recent.map(function (q) { return '<div class="muted num">' + q.date + "　" + q.score + " / " + q.total + "</div>"; }).join("") + "</div></div>" : "") +
+      "</div>";
+    c.querySelectorAll(".quiz-modes [data-mode]").forEach(function (btn) {
+      btn.addEventListener("click", function () { quizMode = btn.getAttribute("data-mode"); quiz = null; renderQuizTab(c); });
+    });
+    renderQuizArea();
+  }
+
+  function renderQuizArea() {
+    var area = document.getElementById("quiz-area");
+    if (!area) return;
+    if (!quiz) {
+      var cardCount = Object.keys(state.cards).length;
+      if (cardCount < 4) {
+        area.innerHTML = '<div class="empty-state">至少要有 4 張單字卡才能開始測驗，目前有 ' + cardCount + " 張，先去「今日紀錄」多新增一些吧</div>";
+        return;
+      }
+      area.innerHTML = '<button class="btn btn-primary" id="start-quiz">開始新測驗（' + (quizMode === "typing" ? "打字題" : "選擇題") + "）</button>";
+      document.getElementById("start-quiz").addEventListener("click", function () {
+        var questions = buildQuiz(10, quizMode);
+        quiz = { questions: questions, index: 0, correct: 0, wrongCardIds: [], grades: {} };
+        renderQuizArea();
+      });
+      return;
+    }
+    if (quiz.index >= quiz.questions.length) {
+      var total = quiz.questions.length;
+      finalizeQuiz();
+      area.innerHTML =
+        '<div class="empty-state"><div style="font-size:1.8rem">' + (quiz.correct === total ? "🏆" : "📝") + '</div>' +
+        '<div style="font-size:1.3rem;font-weight:700" class="num">' + quiz.correct + " / " + total + "</div>" +
+        '<button class="btn btn-primary" id="quiz-again">再測一次</button></div>';
+      document.getElementById("quiz-again").addEventListener("click", function () { quiz = null; renderQuizArea(); });
+      return;
+    }
+    var q = quiz.questions[quiz.index];
+    var progress = '<div class="quiz-progress">第 ' + (quiz.index + 1) + " / " + quiz.questions.length + " 題　答對 " + quiz.correct + " 題</div>";
+    if (q.type === "choice") {
+      area.innerHTML = progress +
+        '<div class="quiz-q-jp">' + escapeHtml(q.front) + (q.reading ? '<div class="flip-back-reading" style="font-size:0.9rem">' + escapeHtml(q.reading) + "</div>" : "") + "</div>" +
+        '<div class="quiz-options">' + q.options.map(function (opt) {
+          return '<button class="quiz-option" data-opt="' + escapeHtml(opt) + '">' + escapeHtml(opt) + "</button>";
+        }).join("") + "</div>";
+      area.querySelectorAll(".quiz-option").forEach(function (btn) {
+        btn.addEventListener("click", function () { answerChoice(q, btn.getAttribute("data-opt")); });
+      });
+    } else {
+      area.innerHTML = progress +
+        '<div class="quiz-q-jp">' + escapeHtml(q.prompt) + "</div>" +
+        '<div style="display:flex;flex-direction:column;gap:10px;max-width:420px">' +
+        '<input type="text" id="typing-input" class="jp" placeholder="' + (q.askFront ? "請輸入日文" : "請輸入中文意思") + '" style="background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px">' +
+        '<button class="btn btn-primary" id="typing-submit">提交答案</button>' +
+        '<div id="typing-feedback"></div>' +
+        "</div>";
+      var input = document.getElementById("typing-input");
+      input.focus();
+      input.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("typing-submit").click(); });
+      document.getElementById("typing-submit").addEventListener("click", function () { answerTyping(q, input.value); });
+    }
+  }
+
+  function answerChoice(q, chosen) {
+    var correct = chosen === q.answer;
+    document.querySelectorAll(".quiz-option").forEach(function (btn) {
+      btn.disabled = true;
+      var val = btn.getAttribute("data-opt");
+      if (val === q.answer) btn.classList.add("correct");
+      else if (val === chosen) btn.classList.add("wrong");
+    });
+    recordAnswer(q, correct);
+    setTimeout(function () { quiz.index++; renderQuizArea(); }, 900);
+  }
+
+  function answerTyping(q, typed) {
+    var okMain = normalize(typed) === normalize(q.answer);
+    var okAlt = q.altAnswer && normalize(typed) === normalize(q.altAnswer);
+    var correct = okMain || okAlt;
+    var fb = document.getElementById("typing-feedback");
+    document.getElementById("typing-submit").disabled = true;
+    document.getElementById("typing-input").disabled = true;
+    if (correct) {
+      fb.innerHTML = '<div class="typing-feedback ok">✔️ 答對了！正確答案：' + escapeHtml(q.answer) + "</div>" +
+        '<button class="btn btn-primary" id="typing-next" style="margin-top:10px">下一題</button>';
+      recordAnswer(q, true);
+      document.getElementById("typing-next").addEventListener("click", function () { quiz.index++; renderQuizArea(); });
+    } else {
+      fb.innerHTML =
+        '<div class="typing-feedback no">你的答案：' + escapeHtml(typed || "（空白）") + '　／　正確答案：' + escapeHtml(q.answer) + (q.altAnswer ? "（" + escapeHtml(q.altAnswer) + "）" : "") + "</div>" +
+        '<div style="display:flex;gap:8px;margin-top:10px">' +
+        '<button class="btn btn-ghost btn-sm" id="mark-correct">其實我答對了</button>' +
+        '<button class="btn btn-primary btn-sm" id="mark-wrong">算我錯，下一題</button>' +
+        "</div>";
+      document.getElementById("mark-correct").addEventListener("click", function () { recordAnswer(q, true); quiz.index++; renderQuizArea(); });
+      document.getElementById("mark-wrong").addEventListener("click", function () { recordAnswer(q, false); quiz.index++; renderQuizArea(); });
+    }
+  }
+
+  function recordAnswer(q, correct) {
+    if (quiz.grades[q.cardId] !== undefined) return;
+    quiz.grades[q.cardId] = correct;
+    if (correct) quiz.correct++;
+    else quiz.wrongCardIds.push(q.cardId);
+  }
+
+  function finalizeQuiz() {
+    if (quiz._finalized) return;
+    quiz._finalized = true;
+    Object.keys(quiz.grades).forEach(function (cardId) {
+      var card = state.cards[cardId];
+      if (!card) return;
+      var updated = applySrsGrade(card, quiz.grades[cardId] ? "good" : "again");
+      writeDoc("cards", cardId, updated);
+    });
+    var id = genId();
+    writeDoc("quizzes", id, {
+      date: localDateStr(), score: quiz.correct, total: quiz.questions.length,
+      mode: quizMode, wrongCardIds: quiz.wrongCardIds, createdAt: new Date().toISOString()
+    });
+  }
+
+  // ---------- Stats tab ----------
+  function renderStatsTab(c) {
+    c.innerHTML = '<div id="stats-mount"></div>';
+    renderStats();
+  }
+  function renderStats() {
+    var mount = document.getElementById("stats-mount");
+    if (!mount) return;
+    var streak = computeStreak();
+    var totalDays = Object.keys(state.entries).length;
+    var cards = Object.values(state.cards);
+    var mastered = cards.filter(function (c) { return c.srs.interval >= 21; }).length;
+    var due = dueCards().length;
+    var quizzes = Object.values(state.quizzes);
+    var avgAcc = quizzes.length ? Math.round(100 * quizzes.reduce(function (s, q) { return s + q.score / q.total; }, 0) / quizzes.length) : null;
+
+    mount.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:18px">' +
+      '<div class="section-title">統計</div>' +
+      '<div class="stat-grid">' +
+        statTile(streak.current, "🔥 連續天數") +
+        statTile(streak.longest, "🏅 最長連續紀錄") +
+        statTile(totalDays, "📅 累積學習天數") +
+        statTile(cards.length, "🈴 單字卡總數") +
+        statTile(mastered, "✅ 已熟悉（21天+）") +
+        statTile(due, "📌 今天待複習") +
+        (avgAcc !== null ? statTile(avgAcc + "%", "🎯 測驗平均正確率") : "") +
+      "</div>" +
+      '<div>' +
+        '<div class="section-title" style="font-size:0.9rem;margin-bottom:8px">近期學習狀況</div>' +
+        '<div class="heatmap" id="heatmap"></div>' +
+        '<div class="muted" style="margin-top:6px">顏色越深代表那天記錄的內容越多</div>' +
+      "</div>" +
+      "</div>";
+    renderHeatmap();
+  }
+  function statTile(num, label) {
+    return '<div class="stat-tile"><div class="num">' + num + "</div><div class=\"label\">" + label + "</div></div>";
+  }
+  function renderHeatmap() {
+    var el = document.getElementById("heatmap");
+    if (!el) return;
+    var numWeeks = 12;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var endOfWeek = new Date(today); endOfWeek.setDate(today.getDate() + (6 - today.getDay()));
+    var totalCells = numWeeks * 7;
+    var start = new Date(endOfWeek); start.setDate(endOfWeek.getDate() - totalCells + 1);
+    var html = "";
+    for (var i = 0; i < totalCells; i++) {
+      var d = new Date(start); d.setDate(start.getDate() + i);
+      var ds = localDateStr(d);
+      var future = d > today;
+      var entry = state.entries[ds];
+      var count = entry ? (entry.vocab || []).length + (entry.grammar || []).length : 0;
+      var tier = count === 0 ? "" : count <= 2 ? "t1" : count <= 5 ? "t2" : "t3";
+      html += '<div class="cell ' + tier + (future ? " future" : "") + '" title="' + ds + (count ? "：" + count + " 項" : "") + '"></div>';
+    }
+    el.innerHTML = html;
+  }
+
+  init();
+})();
+</script>
