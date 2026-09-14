@@ -1019,8 +1019,34 @@
         '<div class="heatmap" id="heatmap"></div>' +
         '<div class="muted" style="margin-top:6px">顏色越深代表那天記錄的內容越多</div>' +
       "</div>" +
+      '<div><button class="btn btn-ghost btn-sm" id="export-backup">💾 匯出資料備份（JSON）</button></div>' +
       "</div>";
     renderHeatmap();
+    document.getElementById("export-backup").addEventListener("click", exportBackup);
+  }
+  async function exportBackup() {
+    var payload = JSON.stringify({ entries: state.entries, cards: state.cards, quizzes: state.quizzes, exportedAt: new Date().toISOString() }, null, 2);
+    var filename = "nihongo-shugyou-cho-backup-" + localDateStr() + ".json";
+    if (downloadsApi) {
+      try {
+        await downloadsApi.save({ filename: filename, data: payload });
+        toast("已匯出備份 🎀");
+      } catch (e) {
+        toast(e && e.code === "declined" ? "已取消匯出" : "匯出失敗，請稍後再試");
+      }
+      return;
+    }
+    try {
+      var blob = new Blob([payload], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast("已下載備份 🎀");
+    } catch (e) {
+      toast("這個環境不支援下載");
+    }
   }
   function statTile(num, label) {
     return '<div class="stat-tile"><div class="num">' + num + "</div><div class=\"label\">" + label + "</div></div>";
