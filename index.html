@@ -616,7 +616,15 @@
       '<div>' +
         '<div class="section-title">🈴 今天學的單字 / 短句</div>' +
         '<div id="vocab-rows"></div>' +
-        '<button class="btn btn-ghost btn-sm" id="add-vocab" style="margin-top:8px">＋ 新增單字</button>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">' +
+          '<button class="btn btn-ghost btn-sm" id="add-vocab">＋ 新增單字</button>' +
+          '<button class="btn btn-ghost btn-sm" id="toggle-paste-import">📋 貼上文字自動抓單字</button>' +
+        '</div>' +
+        '<div id="paste-import" hidden style="margin-top:10px;display:flex;flex-direction:column;gap:8px;background:var(--surface-2);border-radius:14px;padding:12px">' +
+          '<div class="muted">把從 Spotify／Apple Podcasts／IG 等任何地方複製來的集數說明貼在這裡，App 會試著自動抓出「單字（讀音）意思：說明」這種格式，抓出來的還是會先變成可編輯的單字列，你確認沒問題再儲存。抓不到也沒關係，手動新增就好。</div>' +
+          '<textarea id="paste-text" placeholder="貼上文字...&#10;例如：Itadakimasu（いただきます）意思：我要開動了" style="min-height:90px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px"></textarea>' +
+          '<div><button class="btn btn-primary btn-sm" id="parse-paste">✨ 解析並加入單字</button></div>' +
+        '</div>' +
       '</div>' +
 
       '<div>' +
@@ -654,6 +662,40 @@
     var episodeInput = document.getElementById("f-episode");
     episodeInput.addEventListener("input", function () { renderEpisodeSuggestions(episodeInput.value, vocabContainer); });
     renderEpisodeSuggestions(episodeInput.value, vocabContainer);
+
+    var pasteBox = document.getElementById("paste-import");
+    document.getElementById("toggle-paste-import").addEventListener("click", function () {
+      pasteBox.hidden = !pasteBox.hidden;
+      if (!pasteBox.hidden) document.getElementById("paste-text").focus();
+    });
+    document.getElementById("parse-paste").addEventListener("click", function () {
+      var raw = document.getElementById("paste-text").value;
+      var found = parsePastedVocab(raw);
+      if (!found.length) {
+        toast("沒有偵測到「單字（讀音）意思：說明」這種格式，可以手動新增");
+        return;
+      }
+      found.forEach(function (v) { addVocabRow(vocabContainer, v); });
+      document.getElementById("paste-text").value = "";
+      toast("抓到 " + found.length + " 個，請檢查一下再儲存 ✨");
+    });
+  }
+
+  function parsePastedVocab(text) {
+    var isJp = function (s) { return /[぀-ヿ一-鿿]/.test(s); };
+    var results = [];
+    var normalized = String(text || "").replace(/[\r　]/g, " ");
+    var re = /([^\s（(。.！!、，]+)[（(]([^）)]+)[）)]\s*[:：]?\s*(?:意思\s*[:：]?)?\s*([^。.！!]*)/g;
+    var m;
+    while ((m = re.exec(normalized)) !== null) {
+      var a = m[1].trim(), b = m[2].trim(), meaning = m[3].replace(/^[:：\s]+/, "").trim();
+      if (!a || !b || !meaning) continue;
+      var aJp = isJp(a), bJp = isJp(b);
+      var front = aJp ? a : (bJp ? b : a);
+      var reading = aJp ? b : (bJp ? a : b);
+      results.push({ front: front, reading: reading === front ? "" : reading, meaning: meaning });
+    }
+    return results;
   }
 
   function findKnownEpisode(text) {
