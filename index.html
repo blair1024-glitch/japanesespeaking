@@ -163,6 +163,7 @@
   .entry-body { display: none; flex-direction: column; gap: 10px; padding-top: 6px; border-top: 1px solid var(--line); }
   .entry-card.open .entry-body { display: flex; }
   .chip { display: inline-block; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 10px; font-size: 0.74rem; font-weight: 600; }
+  .chip-added { background: var(--good-soft); color: var(--good); }
   .vocab-list-item { display: flex; gap: 8px; flex-wrap: baseline; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
   .vocab-list-item:last-child { border-bottom: none; }
   .vocab-jp { font-family: "Zen Maru Gothic"; font-weight: 700; }
@@ -568,6 +569,7 @@
   var STORAGE_KEY = "nihongo-shugyou-cho:v1";
   var TABS = [
     { key: "today", label: "今日紀錄" },
+    { key: "reading", label: "閱讀" },
     { key: "review", label: "回顧" },
     { key: "cards", label: "單字卡" },
     { key: "quiz", label: "小測驗" },
@@ -584,6 +586,7 @@
   var flashIndex = 0;
   var quizMode = "choice";
   var quiz = null;
+  var readingOpenEpisodes = {};
 
   function localDateStr(d) {
     d = d || new Date();
@@ -664,6 +667,7 @@
   function renderReactive() {
     updateStreakPill();
     updateTabBadge();
+    if (activeTab === "reading") renderReadingList();
     if (activeTab === "review") renderReview();
     if (activeTab === "stats") renderStats();
     if (activeTab === "cards") renderCardManagerOnly();
@@ -782,12 +786,16 @@
     return Object.assign({}, card, { srs: srs });
   }
 
+  function findExistingCard(front, tag) {
+    return Object.values(state.cards).find(function (c) {
+      return c.tag === tag && normalize(c.front) === normalize(front);
+    }) || null;
+  }
+
   function upsertCardFromRow(front, reading, meaning, example, tag, sourceDate, sourceEpisode) {
     front = front.trim();
     if (!front) return;
-    var existing = Object.values(state.cards).find(function (c) {
-      return c.tag === tag && normalize(c.front) === normalize(front);
-    });
+    var existing = findExistingCard(front, tag);
     if (existing) {
       var updated = Object.assign({}, existing, { reading: reading, meaning: meaning, example: example, sourceDate: sourceDate, sourceEpisode: sourceEpisode });
       writeDoc("cards", existing.id, updated);
@@ -819,6 +827,7 @@
   function renderContent() {
     var c = document.getElementById("content");
     if (activeTab === "today") { renderTodayTab(c); }
+    else if (activeTab === "reading") { renderReadingTab(c); }
     else if (activeTab === "review") { renderReviewTab(c); }
     else if (activeTab === "cards") { renderCardsTab(c); }
     else if (activeTab === "quiz") { renderQuizTab(c); }
@@ -1026,6 +1035,102 @@
       toast("已儲存！同步了 " + cardCount + " 張單字卡");
       renderReactive();
     });
+  }
+
+  // ---------- Reading tab ----------
+  function renderReadingTab(c) {
+    c.innerHTML =
+      '<div style="display:flex;flex-direction:column;gap:14px">' +
+      '<div class="section-title">📖 閱讀學習</div>' +
+      '<p class="muted" style="margin-top:-8px">瀏覽我們從網路公開的集數說明蒐集到的單字，<strong>不是官方逐字稿</strong>，邊讀邊確認意思，喜歡的字直接加入單字卡，不用先聽再手動輸入。</p>' +
+      '<input type="text" id="reading-search" class="field search-box" placeholder="搜尋單字、意思或集數..." style="background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px">' +
+      '<div id="reading-list"></div>' +
+      "</div>";
+    document.getElementById("reading-search").addEventListener("input", function (e) { renderReadingList(e.target.value); });
+    renderReadingList("");
+  }
+
+  function renderReadingList(query) {
+    var list = document.getElementById("reading-list");
+    if (!list) return;
+    query = (query || (document.getElementById("reading-search") ? document.getElementById("reading-search").value : "") || "").trim().toLowerCase();
+    var episodes = KNOWN_EPISODES.filter(function (e) { return e.vocab && e.vocab.length; });
+    var filtered = episodes.filter(function (e) {
+      if (!query) return true;
+      var hay = ("ep." + e.ep + " " + e.title + " " + e.vocab.map(function (v) {
+        return v.front + " " + v.reading + " " + v.meaning + " " + (v.example || "");
+      }).join(" ")).toLowerCase();
+      return hay.indexOf(query) !== -1;
+    });
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty-state"><div style="font-size:1.6rem">📭</div><div>沒有符合的單字</div></div>';
+      return;
+    }
+    list.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px">' + filtered.map(renderReadingEpisodeCard).join("") + "</div>";
+
+    list.querySelectorAll(".reading-episode .entry-head").forEach(function (h) {
+      h.addEventListener("click", function () {
+        var card = h.closest(".entry-card");
+        var ep = card.getAttribute("data-ep");
+        readingOpenEpisodes[ep] = !readingOpenEpisodes[ep];
+        card.classList.toggle("open");
+      });
+    });
+    list.querySelectorAll(".reading-ep-link").forEach(function (a) {
+      a.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+    list.querySelectorAll(".reading-add-word").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var ep = parseInt(btn.getAttribute("data-ep"), 10);
+        var idx = parseInt(btn.getAttribute("data-idx"), 10);
+        var episode = KNOWN_EPISODES.find(function (e) { return e.ep === ep; });
+        var v = episode && episode.vocab[idx];
+        if (!v) return;
+        upsertCardFromRow(v.front, v.reading, v.meaning, v.example || "", "vocab", null, "Ep." + ep + "：" + episode.title);
+        toast("已加入單字卡：" + v.front);
+      });
+    });
+    list.querySelectorAll(".reading-add-all").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var ep = parseInt(btn.getAttribute("data-ep"), 10);
+        var episode = KNOWN_EPISODES.find(function (e) { return e.ep === ep; });
+        if (!episode) return;
+        var added = 0;
+        episode.vocab.forEach(function (v) {
+          if (findExistingCard(v.front, "vocab")) return;
+          upsertCardFromRow(v.front, v.reading, v.meaning, v.example || "", "vocab", null, "Ep." + ep + "：" + episode.title);
+          added++;
+        });
+        toast(added ? "已加入 " + added + " 個單字" : "這集的單字都已經加入過了");
+      });
+    });
+  }
+
+  function renderReadingEpisodeCard(e) {
+    var vocabHtml = e.vocab.map(function (v, i) {
+      var existing = findExistingCard(v.front, "vocab");
+      return '<div class="vocab-list-item">' +
+        '<span class="vocab-jp">' + escapeHtml(v.front) + "</span>" +
+        (v.reading ? '<span class="vocab-reading">' + escapeHtml(v.reading) + "</span>" : "") +
+        '<span class="vocab-meaning">' + escapeHtml(v.meaning) + "</span>" +
+        (v.example ? '<span class="vocab-example">' + escapeHtml(v.example) + "</span>" : "") +
+        (existing
+          ? '<span class="chip chip-added" style="margin-left:auto">✓ 已加入</span>'
+          : '<button type="button" class="btn btn-ghost btn-sm reading-add-word" style="margin-left:auto" data-ep="' + e.ep + '" data-idx="' + i + '">＋ 加入單字卡</button>') +
+        "</div>";
+    }).join("");
+    var allAdded = e.vocab.every(function (v) { return findExistingCard(v.front, "vocab"); });
+    return '<div class="entry-card reading-episode' + (readingOpenEpisodes[e.ep] ? " open" : "") + '" data-ep="' + e.ep + '">' +
+      '<div class="entry-head"><div><div class="entry-date">Ep.' + e.ep + '</div>' +
+      '<div class="entry-meta">' + escapeHtml(e.title) + "</div></div>" +
+      '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">' +
+      '<span class="chip">單字 ' + e.vocab.length + "</span>" +
+      (e.url ? '<a class="reading-ep-link muted" href="' + escapeHtml(e.url) + '" target="_blank" rel="noopener">🎧</a>' : "") +
+      "</div></div>" +
+      '<div class="entry-body">' +
+      (allAdded ? "" : '<button type="button" class="btn btn-ghost btn-sm reading-add-all" data-ep="' + e.ep + '">＋ 全部加入</button>') +
+      vocabHtml +
+      "</div></div>";
   }
 
   // ---------- Review tab ----------
