@@ -139,6 +139,7 @@
   .btn-ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }
   .btn-ghost:hover { background: var(--accent-soft); border-color: var(--accent); }
   .btn-danger { background: transparent; border-color: var(--warn); color: var(--warn); }
+  .btn-danger.confirming { background: var(--warn); color: #fff; }
   .btn-sm { padding: 6px 12px; font-size: 0.78rem; }
 
   .vocab-row, .grammar-row {
@@ -1146,10 +1147,20 @@
       });
     });
     mount.querySelectorAll(".delete-card").forEach(function (btn) {
+      var confirmTimer = null;
       btn.addEventListener("click", function () {
+        if (!btn.classList.contains("confirming")) {
+          btn.classList.add("confirming");
+          btn.textContent = "確定？";
+          confirmTimer = setTimeout(function () {
+            btn.classList.remove("confirming");
+            btn.textContent = "🗑";
+          }, 3000);
+          return;
+        }
+        clearTimeout(confirmTimer);
         var row = btn.closest(".cm-row");
         var id = row.getAttribute("data-id");
-        if (!confirm("確定要刪除這張單字卡嗎？")) return;
         deleteDocFn("cards", id).then(function () { toast("已刪除"); });
       });
     });
