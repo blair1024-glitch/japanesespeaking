@@ -252,80 +252,316 @@
   "use strict";
 
   var KNOWN_EPISODES = [
-    { ep: 1, title: "不完美又怎樣！覺得「講日文很好玩！」才是最重要的！" },
-    { ep: 2, title: "萬用日文「Dai jo-bu!」✨", url: "https://podcasts.apple.com/sg/podcast/ep-2-%E8%90%AC%E7%94%A8%E6%97%A5%E6%96%87-dai-jo-bu/id1841097463?i=1000727958025" },
-    {
-      ep: 3, title: "「大丈夫」的第二個用法「不用，謝謝」和禮貌表現「です（desu）」",
-      vocab: [
-        { front: "大丈夫", reading: "daijoubu", meaning: "不用，謝謝（大丈夫的第二種用法，婉拒別人時使用）" },
-        { front: "です", reading: "desu", meaning: "禮貌的斷定語尾，中文大概是「是～」" }
-      ]
-    },
-    {
-      ep: 4, title: "簡單自我介紹的日文「Watashi wa ○○desu（我是○○）」",
-      vocab: [
-        { front: "わたしは○○です", reading: "watashi wa ○○ desu", meaning: "我是○○（最基本的自我介紹句型）" }
-      ]
-    },
-    { ep: 5, title: "感到很窩心的「Konnichiwa」「Arigatou」🤝🏻", url: "https://open.spotify.com/episode/3i26YLJc1rLt4v4NS4Ae6x" },
-    {
-      ep: 6, title: "吃飯時，過去說什麼？？「Gochiso-samadeshita」「Itadakimasu」🙏",
-      vocab: [
-        { front: "いただきます", reading: "itadakimasu", meaning: "我要開動了（也有感謝食物、感謝準備的人的意思）" },
-        { front: "ごちそうさまでした", reading: "gochisousama deshita", meaning: "我吃飽了（感謝食物，也感謝做飯或招待我的人）" }
-      ]
-    },
-    { ep: 9, title: "從玩笑裡的日文學最快？「Bakayaro-!」👻", url: "https://open.spotify.com/episode/3TXcfmNRJw3IOQVrpeAqsi" },
-    {
-      ep: 10, title: "日本人幾乎不會用的「Sayo-nara」和常用的「Matane」👋🏻", url: "https://open.spotify.com/episode/0pQHG9RuDaw6bStkYhD4xU",
-      vocab: [
-        { front: "さようなら", reading: "sayounara", meaning: "再見（正式、有距離感，日本人很少對朋友這樣說）" },
-        { front: "またね", reading: "matane", meaning: "下次見（日常最常用，朋友間的道別）" }
-      ]
-    },
-    { ep: 11, title: "「日文50音」是什麼？平假名、片假名又是怎麼樣的呢？👀", url: "https://open.spotify.com/episode/5ncleeHa1mBjenPiN9Wxva" },
-    {
-      ep: 25, title: "結帳日文的10個關鍵單字🔑💳", url: "https://podcasts.apple.com/jp/podcast/ep-25-%E7%B5%90%E5%B8%B3%E6%97%A5%E6%96%87%E7%9A%8410%E5%80%8B%E9%97%9C%E9%8D%B5%E5%96%AE%E5%AD%97/id1841097463?i=1000737006072&l=en-US",
-      vocab: [
-        { front: "お会計", reading: "okaikei", meaning: "結帳" },
-        { front: "伝票", reading: "denpyou", meaning: "帳單/收據" },
-        { front: "一緒", reading: "issho", meaning: "一起（合併結帳時會用到）" },
-        { front: "支払い方法", reading: "shiharai houhou", meaning: "付款方式" },
-        { front: "現金", reading: "genkin", meaning: "現金" },
-        { front: "クレジットカード", reading: "kurejitto kaado", meaning: "信用卡" },
-        { front: "支払い回数", reading: "shiharai kaisuu", meaning: "分期付款次數" },
-        { front: "一括", reading: "ikkatsu", meaning: "一次付清" },
-        { front: "ポイントカード", reading: "pointo kaado", meaning: "集點卡" }
-      ]
-    },
-    { ep: 46, title: "「可以跟你一起拍照嗎」日文怎麼說？「写真、一緒にいいですか」", url: "https://podcasts.apple.com/tw/podcast/ep-46-%E5%8F%AF%E4%BB%A5%E8%B7%9F%E4%BD%A0%E4%B8%80%E8%B5%B7%E6%8B%8D%E7%85%A7%E5%97%8E-%E6%97%A5%E6%96%87%E6%80%8E%E9%BA%BC%E8%AA%AA-%E5%86%99%E7%9C%9F-%E4%B8%80%E7%B7%92%E3%81%AB%E3%81%84%E3%81%84%E3%81%A7%E3%81%99%E3%81%8B-shashin-isshoni-i-desuka/id1841097463?i=1000745667643&l=en-GB" },
-    {
-      ep: 62, title: "【單字聽聽看🎧#1】早餐篇🍳｜最常用10個單字＆例句", url: "https://podcasts.apple.com/hk/podcast/ep-62-%E5%96%AE%E5%AD%97%E8%81%BD%E8%81%BD%E7%9C%8B-1-%E6%97%A9%E9%A4%90%E7%AF%87-%E6%9C%80%E5%B8%B8%E7%94%A810%E5%80%8B%E5%96%AE%E5%AD%97-%E4%BE%8B%E5%8F%A5/id1841097463?i=1000753924389&l=en-GB",
-      vocab: [
-        { front: "朝ごはん", reading: "asagohan", meaning: "早餐", example: "私は毎日朝ごはんを食べます。" },
-        { front: "食べる", reading: "taberu", meaning: "吃", example: "なに食べる？" },
-        { front: "パン", reading: "pan", meaning: "麵包", example: "朝はパンが好き！" },
-        { front: "たまご", reading: "tamago", meaning: "雞蛋", example: "今日はたまごを二個食べました。" }
-      ]
-    },
-    {
-      ep: 69, title: "【便利商店篇①】最簡單的「請給我」的日文「ください」怎麼用？🤲🏻", url: "https://creators.spotify.com/pod/profile/yuma565/episodes/Ep-69-e3gts68",
-      vocab: [
-        { front: "袋ください", reading: "fukuro kudasai", meaning: "請給我袋子" },
-        { front: "おはしください", reading: "ohashi kudasai", meaning: "請給我筷子" },
-        { front: "スプーンください", reading: "supuun kudasai", meaning: "請給我湯匙" },
-        { front: "おしぼりください", reading: "oshibori kudasai", meaning: "請給我濕紙巾" }
-      ]
-    },
-    {
-      ep: 71, title: "【單字聽聽看🎧#4】日式飯糰口味篇🍙", url: "https://podcasts.apple.com/hk/podcast/ep-71-%E5%96%AE%E5%AD%97%E8%81%BD%E8%81%BD%E7%9C%8B-4-%E6%97%A5%E5%BC%8F%E9%A3%AF%E7%B3%B0%E5%8F%A3%E5%91%B3%E7%AF%87-yuma%E6%8E%A8%E8%96%A6-%E6%9C%80%E5%B8%B8%E7%94%A810%E5%80%8B%E5%96%AE%E5%AD%97-%E4%BE%8B%E5%8F%A5/id1841097463?i=1000758105908&l=en-GB",
-      vocab: [
-        { front: "鮭", reading: "shake", meaning: "鮭魚", example: "しゃけおにぎりは二番目に人気です。" },
-        { front: "梅", reading: "ume", meaning: "梅子", example: "梅おにぎりは、シンプルですがおいしいですよ。" },
-        { front: "ツナマヨ", reading: "tsunamayo", meaning: "鮪魚美乃滋", example: "ツナマヨおにぎりが一番人気です。" },
-        { front: "昆布", reading: "konbu", meaning: "昆布", example: "昆布おにぎりを作ってみよう。" }
-      ]
-    }
+  { ep: 1, title: "不完美又怎樣！覺得「講日文很好玩！」才是最重要的！" },
+  { ep: 2, title: "萬用日文「Dai jo-bu!」✨", url: "https://podcasts.apple.com/sg/podcast/ep-2-%E8%90%AC%E7%94%A8%E6%97%A5%E6%96%87-dai-jo-bu/id1841097463?i=1000727958025", vocab: [
+      { front: "漢字：大丈夫", reading: "だいじょうぶ", meaning: "沒事，沒問題！👌🏻👌🏻 . ✏️Ep.2 裡面出現的其他的日文✏️ Koko," }
+    ] },
+  { ep: 3, title: "「大丈夫」的第二個用法「不用，謝謝」和禮貌表現「です（desu）」", vocab: [
+      { front: "漢字：大丈夫です", reading: "だいじょうぶ です", meaning: "不用，謝謝 . ✏️Ep.3 裡面出現的其他的日文✏" },
+      { front: "ふくろ・袋", reading: "Fukuro", meaning: "袋子 Fukuro wa" },
+      { front: "袋 は いりますか？", reading: "irimasuka?", meaning: "需要袋子嗎？" }
+    ] },
+  { ep: 4, title: "簡單自我介紹的日文「Watashi wa ⚪︎⚪︎desu（我是⚪︎⚪︎）」", vocab: [
+      { front: "漢字：私", reading: "わたし", meaning: "は ⚪︎⚪︎です 意思：我是⚪︎⚪︎" }
+    ] },
+  { ep: 5, title: "感到很窩心的「Konnichiwa」「Arigatou」🤝🏻", url: "https://open.spotify.com/episode/3i26YLJc1rLt4v4NS4Ae6x", vocab: [
+      { front: "ありがとう", reading: "Arigatou", meaning: "／Arigatou" },
+      { front: "ありがとうございます", reading: "gozaimasu", meaning: "謝謝💐" }
+    ] },
+  { ep: 6, title: "吃飯時，過去說什麼？？「Gochiso-samadeshita」「Itadakimasu」🙏🏻🥢", vocab: [
+      { front: "ごちそうさまでした", reading: "deshita", meaning: "我吃飽了，感謝食物，也感謝做飯或招待我的人🙏" }
+    ] },
+  { ep: 7, title: "吃一口，好吃就說「Oishi〜!😋」或「Umai !😎」" },
+  { ep: 8, title: "唸起來很好玩?的「Chotto matte! 🫷🏻（等一下！）」", vocab: [
+      { front: "ちょっと まってください", reading: "kudasai", meaning: "←有禮貌的說法 意思：請稍等一下" }
+    ] },
+  { ep: 9, title: "從玩笑裡的日文學最快？「Bakayaro-! 👻」", url: "https://open.spotify.com/episode/3TXcfmNRJw3IOQVrpeAqsi", vocab: [
+      { front: "ばかやろう", reading: "Bakayaro-!", meaning: "漢字：馬鹿野郎 意思：這個笨蛋！" }
+    ] },
+  { ep: 10, title: "日本人幾乎不會用的「Sayo-nara」和常用的「Matane」👋🏻", url: "https://open.spotify.com/episode/0pQHG9RuDaw6bStkYhD4xU", vocab: [
+      { front: "さようなら", reading: "Sayo-nara", meaning: "再見" },
+      { front: "バイバイ", reading: "／Baibai", meaning: "下次見👋" }
+    ] },
+  { ep: 11, title: "「日文50音」是什麼？平假名、片假名又是怎麼樣的呢？👀", url: "https://open.spotify.com/episode/5ncleeHa1mBjenPiN9Wxva", vocab: [
+      { front: "そ", reading: "so", meaning: "… あ(" }
+    ] },
+  { ep: 12, title: "跟著常用的單字一起練習50音吧！（あ行～な行）【前半段】", vocab: [
+      { front: "あめ", reading: "雨", meaning: "☔️ → 雨" },
+      { front: "いぬ", reading: "犬", meaning: "🐶 → 狗狗" },
+      { front: "う", reading: "u", meaning: "｜　うさぎ🐰 → 兔子" },
+      { front: "えき", reading: "駅", meaning: "🚉 → 車站" },
+      { front: "おちゃ", reading: "お茶", meaning: "🍵 → 茶" },
+      { front: "かさ", reading: "傘", meaning: "☂️ → 雨傘" },
+      { front: "き", reading: "木", meaning: "🌳 → 樹" },
+      { front: "くるま", reading: "車", meaning: "🚗 → 車子" },
+      { front: "け", reading: "毛", meaning: "🪮 → 毛" },
+      { front: "こえ", reading: "声", meaning: "🗣️ → 聲音" },
+      { front: "さしみ", reading: "刺身", meaning: "🐟 → 生魚片" }
+    ] },
+  { ep: 13, title: "回答大家的問題①「50音背不起來，怎麼辦？🫠」" },
+  { ep: 14, title: "跟著常用的單字一起練習50音吧！（は行〜わ行）【後半段】", vocab: [
+      { front: "は", reading: "歯", meaning: "🦷 →牙齒" },
+      { front: "ひ", reading: "火", meaning: "🔥 → 火" },
+      { front: "ふじさん", reading: "富士山", meaning: "🗻 →富士山" },
+      { front: "へや", reading: "部屋", meaning: "🏠 → 房間" },
+      { front: "ほし", reading: "星", meaning: "⭐️ → 星星" },
+      { front: "まど", reading: "窓", meaning: "🪟 → 窗戶" },
+      { front: "みみ", reading: "耳", meaning: "👂 →耳朵" },
+      { front: "むし", reading: "虫", meaning: "🐛 → 蟲" },
+      { front: "め", reading: "目", meaning: "👀 → 眼睛" },
+      { front: "もも", reading: "桃", meaning: "🍑 →桃子" },
+      { front: "や", reading: "ya", meaning: "｜　やきに" }
+    ] },
+  { ep: 15, title: "簡單學會！日文裡面的5個基本發音特色🗣️✨" },
+  { ep: 16, title: "飛日本前必學的「すみません、トイレはどこですか？（Sumimasen, toire wa doko desuka?）」🚽🤭", vocab: [
+      { front: "ですか", reading: "desuka", meaning: "〜嗎？　←有禮貌的疑問句尾^^" }
+    ] },
+  { ep: 17, title: "實際練習一下怎麼問廁所、車站、出口在哪裡🚉🚽🚪", vocab: [
+      { front: "とうきょうえき", reading: "To-kyo-eki", meaning: "東京車站" },
+      { front: "南口", reading: "みなみぐち", meaning: "はどこですか？（Sumimasen, minami guchi wa doko desu" }
+    ] },
+  { ep: 18, title: "回答大家的問題②：在東京推薦吃跟玩的地方、連日本人都覺得很難發音的詞🔩👅" },
+  { ep: 19, title: "點餐、Check-in 一定會用到的「おねがいします（Onegai shimasu）」🙋🏻🏨🍻", vocab: [
+      { front: "ちゅうもん", reading: "注文", meaning: "（chu-mon）：點餐" }
+    ] },
+  { ep: 20, title: "學會生存日文「これ ひとつ（Kore hitotsu）」就可以點餐啦！☝🏻🙋🏻‍♀️", vocab: [
+      { front: "ひとつ", reading: "hitotsu", meaning: "一個 🍰" },
+      { front: "みっつ", reading: "mittsu", meaning: "三個 🍰🍰🍰" }
+    ] },
+  { ep: 21, title: "【複習測驗】在實際的情境裡，你全部能說出來嗎？🥴", vocab: [
+      { front: "ちょっとまってください", reading: "Chotto matte kudasai", meaning: "さようなら" }
+    ] },
+  { ep: 22, title: "去日本便利商店前一定要學起來的關鍵單字🍱🥢🧾", vocab: [
+      { front: "あたため", reading: "atatame", meaning: "加熱🍱" },
+      { front: "おはし", reading: "ohashi", meaning: "筷子🥢" },
+      { front: "スプーン", reading: "supu-n", meaning: "湯匙🥄" },
+      { front: "フォーク", reading: "fo-ku", meaning: "叉子" },
+      { front: "おかいけい", reading: "okaike-", meaning: "結帳" },
+      { front: "レシート", reading: "reshi-to", meaning: "收據🧾" }
+    ] },
+  { ep: 23, title: "一起練習一下在便利商店裡的實際日文會話🏪💁‍♀️", vocab: [
+      { front: "はいりますか？", reading: "需要袋子嗎？", meaning: "💁‍♀️： あたため" },
+      { front: "はございますか？", reading: "有需要加熱的商品嗎？", meaning: "💁‍♀️： おはし" },
+      { front: "はおつけしますか？", reading: "筷子要幫您附上嗎？", meaning: "／ スプーンやフォーク" },
+      { front: "はおつけしますか？", reading: "湯匙或叉子要幫您附上嗎？", meaning: "💁‍♀️： おしぼり" },
+      { front: "ですか？", reading: "要濕紙巾嗎？", meaning: "💁‍♀️：" },
+      { front: "700円", reading: "ななひゃくえん", meaning: "になります（總共是" }
+    ] },
+  { ep: 24, title: "聽不懂店員說什麼也不要放棄！會說「もういちど おねがいします🙏🏻」就能再聽一次💪🏻", vocab: [
+      { front: "一回", reading: "いっかい　ikkai", meaning: "一次　←平常都會用這個👭" }
+    ] },
+  { ep: 25, title: "結帳日文的10個關鍵單字🔑💳", url: "https://podcasts.apple.com/jp/podcast/ep-25-%E7%B5%90%E5%B8%B3%E6%97%A5%E6%96%87%E7%9A%8410%E5%80%8B%E9%97%9C%E9%8D%B5%E5%96%AE%E5%AD%97/id1841097463?i=1000737006072&l=en-US", vocab: [
+      { front: "お会計", reading: "かいけい", meaning: "結帳" },
+      { front: "伝票", reading: "でんぴょう", meaning: "帳單" },
+      { front: "一緒", reading: "いっしょ", meaning: "一起" },
+      { front: "現金", reading: "げんきん", meaning: "現金" }
+    ] },
+  { ep: 26, title: "一起練習在餐廳結帳時的日文會話🧝‍♀️🍽️", vocab: [
+      { front: "お預", reading: "あず", meaning: "かりします" },
+      { front: "はご一緒", reading: "いっしょ", meaning: "でよろしいですか？" },
+      { front: "い方法", reading: "ほうほう", meaning: "は？" }
+    ] },
+  { ep: 27, title: "回答大家的問題③☃️在北海道的生活還習慣嗎？心情低落的時候，該怎麼辦？" },
+  { ep: 28, title: "想試穿時可以用的最～簡單日文！👖「しちゃく、いいですか？（Shichaku i-desuka?）」", vocab: [
+      { front: "どうぞ", reading: "do-zo", meaning: "請～💁‍♀" }
+    ] },
+  { ep: 29, title: "問問店員有沒有你想要的尺寸👕「〜はありますか（~wa arimasuka）」", vocab: [
+      { front: "Lサイズ", reading: "eru saizu", meaning: "L號" }
+    ] },
+  { ep: 30, title: "回答大家的問題④「想知道日文學習者常見的發音錯誤🗣️👀」" },
+  { ep: 31, title: "試穿完不買時要怎麼說？「やっぱり だいじょうぶです🙏🏻（yappari daijōbu desu）」", vocab: [
+      { front: "おつかれさまでした", reading: "otsukaresamadeshita", meaning: "辛苦了💁‍♀" }
+    ] },
+  { ep: 32, title: "尺寸不太合，就可以說「ちょっとちいさいです／おおきいです🙈🩱👞」", vocab: [
+      { front: "ちいさいです", reading: "chotto chi-sai desu", meaning: "／ちょっと" },
+      { front: "ちょっと", reading: "chotto", meaning: "一點點，一下下" }
+    ] },
+  { ep: 33, title: "日文數字🔢 和鞋子的尺寸的說法🥾📏", vocab: [
+      { front: "センチ　senchi", reading: "cm", meaning: "公分📏" }
+    ] },
+  { ep: 34, title: "內用外帶日文怎麼說？🥤☕️「てんないで（Tennai de）／もちかえりで（Mochikaeri de）」", vocab: [
+      { front: "で", reading: "Tennai de", meaning: "／もちかえり" },
+      { front: "はい", reading: "hai", meaning: "好/要　←肯定的回答🌸" }
+    ] },
+  { ep: 35, title: "大家來日本一定想問的！ー請問有熱茶嗎？「あったかいおちゃ🍵はありますか？」" },
+  { ep: 36, title: "在日本可以要求＂溫水＂嗎？🥺「あったかいおゆ は ありますか？」" },
+  { ep: 37, title: "【聊日本生活】家門前發生的車禍——雪國生活的真實一面「🆘たすけてください（救命!）」" },
+  { ep: 38, title: "在日本怎麼說“去冰\"？🧊🙏🏻「こおりぬき に できますか？（Ko-ri nuki ni dekimasuka?）」", vocab: [
+      { front: "できますか？", reading: "dekimasuka?", meaning: "可以～嗎？能做到嗎？" }
+    ] },
+  { ep: 39, title: "向別人請求拍照的日文🙇‍♀️🤳🏻「しゃしん、おねがいできますか？」", vocab: [
+      { front: "おねがいできますか？", reading: "onegai dekimasuka?", meaning: "可以拜託你嗎？" }
+    ] },
+  { ep: 40, title: "把衣服還給店員時為什麼「謝謝」是使用過去式呢？💭【回答問題⑤】" },
+  { ep: 41, title: "一年一度的聖誕節快樂！「メリークリスマス（Meri-kurisumasu）🌟🎄🎅」", vocab: [
+      { front: "クリスマス", reading: "Kurisumasu", meaning: "聖誕節🎄🎅" }
+    ] },
+  { ep: 42, title: "日本年末不會說「新年快樂」，要說「よいおとしを（Yoi otoshi o）🌠」", vocab: [
+      { front: "を", reading: "o", meaning: "用來表示《動作的對象》助詞 . 🖌️本來的整個句子" }
+    ] },
+  { ep: 43, title: "新年快樂🎍🌅「あけましておめでとうございます」＋ActPod互動新消息📢", vocab: [
+      { front: "誕生日", reading: "たんじょうび　tanjo-bi", meaning: "生日" }
+    ] },
+  { ep: 44, title: "想跟日本人打好關係，一定要學會「よろしくおねがいします🙇✨（Yoroshiku onegaishimasu）」", vocab: [
+      { front: "あけおめ！ことよろ！", reading: "Akeome Kotoyoro", meaning: "←縮寫版本的「新年快樂今年也請多關照」🕺🪩" }
+    ] },
+  { ep: 45, title: "每次開頭yuma講的日文是什麼？「それでは はじめましょう！（Soredewa hajimemasho-🙌🏻）」", vocab: [
+      { front: "～ましょう", reading: "〜masyo-", meaning: "〜吧　←「一起來吧」提出建議、邀請的表現🙌" },
+      { front: "たべましょう", reading: "tabemasho-", meaning: "我們吃吧！" },
+      { front: "いきましょう", reading: "ikimasho-", meaning: "我們走吧！" }
+    ] },
+  { ep: 46, title: "「可以跟你一起拍照嗎」日文怎麼說？「写真、一緒にいいですか？🥹🙏🏻（Shashin, isshoni i-desuka?）」", url: "https://podcasts.apple.com/tw/podcast/ep-46-%E5%8F%AF%E4%BB%A5%E8%B7%9F%E4%BD%A0%E4%B8%80%E8%B5%B7%E6%8B%8D%E7%85%A7%E5%97%8E-%E6%97%A5%E6%96%87%E6%80%8E%E9%BA%BC%E8%AA%AA-%E5%86%99%E7%9C%9F-%E4%B8%80%E7%B7%92%E3%81%AB%E3%81%84%E3%81%84%E3%81%A7%E3%81%99%E3%81%8B-shashin-isshoni-i-desuka/id1841097463?i=1000745667643&l=en-GB", vocab: [
+      { front: "いいですか？", reading: "i-deduka?", meaning: "好嗎？可以嗎？ . （中級表現🐓）" }
+    ] },
+  { ep: 47, title: "店員問你時，只是看看而已怎麼說？「ちょっと見てるだけです👀（Chotto miteru dakedesu）」", vocab: [
+      { front: "だけです", reading: "dakedesu", meaning: "只是～而已 . 其他筆記 📒" }
+    ] },
+  { ep: 48, title: "【複習測驗】實際去日本逛衣服店，看看你能說出多少🥴🥾🧶", vocab: [
+      { front: "いいですか？", reading: "Shichaku i-desuka?", meaning: "可以試穿嗎？" },
+      { front: "お願いします", reading: "Kore,onegaishimasu", meaning: "我要這個，麻煩你 「ありがとうございました。や" }
+    ] },
+  { ep: 49, title: "【發音篇】告別外國人風發音🕺靠近日本人發音的小訣竅👩🏻👄" },
+  { ep: 50, title: "【發音篇】日文什麼時候會拉長唸？長音的小規則🍜", vocab: [
+      { front: "おかあさん", reading: "okaasan", meaning: "媽媽" },
+      { front: "おばあさん", reading: "obaasan", meaning: "奶奶" },
+      { front: "※おばさん", reading: "obasan", meaning: "＝阿姨 . ②い段加上母音「い」，聲音會拉長唸" },
+      { front: "ちーさい", reading: "chi-sai", meaning: ". ③う段加上母音「う」，聲音會拉長唸" },
+      { front: "くうき", reading: "kuuki", meaning: "空氣" },
+      { front: "くーき", reading: "ku-ki", meaning: ". ④え段加上母音「え」或者「い」，聲音會拉長唸" }
+    ] },
+  { ep: 51, title: "免税的時候可以用的最簡單日文🛍️「免税、できますか？（Menze-, dekimasuka?）」", vocab: [
+      { front: "できますか？", reading: "dekimasuka?", meaning: "可以嗎？" }
+    ] },
+  { ep: 52, title: "搭計程車說目的地的必學日文🚖「～までお願いします（~made onegaishimasu）」", vocab: [
+      { front: "お願いします", reading: "onegaishimasu", meaning: "我要～，麻煩你了／請幫我做～，麻煩你了" },
+      { front: "東京駅", reading: "To-kyo-eki", meaning: "までお願いします ＝請載我到東京車站🚉" },
+      { front: "空港", reading: "Ku-ko-", meaning: "までお願いします ＝請載我到機場✈" },
+      { front: "ここ", reading: "Koko", meaning: "までお願いします ＝請載我到這裡🤳" }
+    ] },
+  { ep: 53, title: "搭計程車要下車時要怎麼說？🙋🏻🚖「ここで大丈夫です（Kokode daijo-bu desu）」", vocab: [
+      { front: "大丈夫です", reading: "daijo-bu desu", meaning: "「這樣就可以了」「不用再繼續了」「到這裡就好」" }
+    ] },
+  { ep: 54, title: "請店員幫你叫計程車，日文怎麼說？「タクシー１台お願いできますか？🙏🏻🚕（Takushi- ichidai onegaidekimasuka?）」", vocab: [
+      { front: "お願いできますか？", reading: "onegaidekimasuka?", meaning: "可以拜託你嗎" }
+    ] },
+  { ep: 55, title: "【飯店篇】Check-in 必會的基礎日文💪🏻「チェックインお願いします」", vocab: [
+      { front: "チェックアウト", reading: "Chekku auto", meaning: "退房" }
+    ] },
+  { ep: 56, title: "【飯店篇】幾點退房？必學時間日文🕙「チェックアウトは何時ですか？（Chekku auto wa nanji desuka?）」" },
+  { ep: 57, title: "【飯店篇】來日本旅行一定要會的日文🔥可以寄放行李嗎？「荷物、預けてもいいですか？🧳（Nimotsu, azuketemo iidesuka?）」" },
+  { ep: 58, title: "【飯店篇】超實用！多要一個的日文🪥🧴「もうひとつ もらえますか？（Mou hitotsu moraemasuka?）」", vocab: [
+      { front: "歯ブラシ", reading: "はぶらし　haburashi", meaning: "牙刷🪥" }
+    ] },
+  { ep: 59, title: "【飯店篇】去飯店、餐廳一定要會的日文「予約している⚪︎⚪︎です🙋🏻（Yoyaku shiteiru⚪︎⚪︎desu.）」" },
+  { ep: 60, title: "【複習測驗・飯店篇】去日本飯店實戰！看看你會說多少🥴🏨" },
+  { ep: 61, title: "【回答大家的問題⑥】日文星期＆單字怎麼背？🪐" },
+  { ep: 62, title: "【單字聽聽看🎧#1】早餐篇🍳｜最常用10個單字＆例句", vocab: [
+      { front: "朝ごはん｜あさごはん", reading: "Asa gohan", meaning: "早餐", example: "私は毎日朝ごはんを食べます。（Watashi wa mainichi asagohan o tabemasu.）（我每天都會吃早餐）" },
+      { front: "パン｜", reading: "Pan", meaning: "麵包", example: "朝はパンが好き！🍞（Asa wa pan ga suki!）（早餐喜歡吃麵包！）" }
+    ] },
+  { ep: 63, title: "【大家的小疑問#1】日文的「お」「ご」不加會不禮貌嗎？🚰＋節目小更新🌟", vocab: [
+      { front: "水", reading: "omizu", meaning: "お店" },
+      { front: "店", reading: "omise", meaning: "お弁当" },
+      { front: "便當", reading: "obentou", meaning: "お金" },
+      { front: "錢", reading: "okane", meaning: "「 お水" }
+    ] },
+  { ep: 64, title: "【回答大家的問題⑦】yuma推薦的家居用品店🪑🐢家具怎麼挑？" },
+  { ep: 65, title: "【單字聽聽看🎧#2】便利商店篇🍱 ｜最常用10個單字＆例句", vocab: [
+      { front: "コンビニ", reading: "Konbini", meaning: "便利商店", example: "コンビニで朝ごはんを買おう。（Konbini de asagohan o kaou.）（去便利商店買早餐吧）" },
+      { front: "おにぎり", reading: "Onigiri", meaning: "飯糰🍙", example: "なにおにぎりが好き？（Nani onigiri ga suki?）（你喜歡什麼口味的飯糰？）" },
+      { front: "弁当｜べんとう", reading: "Bentou", meaning: "便當🍱", example: "今日は唐揚げ弁当が食べたい！（Kyou wa karaage bentou ga tabetai!）（今天想吃炸雞便當！）" }
+    ] },
+  { ep: 66, title: "關於付款方式「電子支付・Apple Pay・QUICPay」要怎麼說？【大家的小疑問#2】", vocab: [
+      { front: "マネー", reading: "denshi mane-", meaning: "電子支付 . 2️⃣ QUICPay" }
+    ] },
+  { ep: 67, title: "【回答大家的問題⑧】可以教我們和親子有關的用語嗎？👶想看yuma做台灣料理😆" },
+  { ep: 68, title: "【單字聽聽看🎧#3】便利商店店員的定型句🏪💁🏻", vocab: [
+      { front: "ありますか？", reading: "Arimasuka?", meaning: "有嗎？", example: "温めるものはありますか？（Atatameru mono wa arimasuka?）（有需要加熱的東西嗎？）" }
+    ] },
+  { ep: 69, title: "【便利商店篇①】最簡單的「請給我」的日文「ください」怎麼用？🤲🏻", url: "https://creators.spotify.com/pod/profile/yuma565/episodes/Ep-69-e3gts68", vocab: [
+      { front: "袋", reading: "ふくろ", meaning: "ください ：請給我袋子" }
+    ] },
+  { ep: 70, title: "【便利商店篇②】兩個超常用的「お願いします」これ、温めお願いします🍱", vocab: [
+      { front: "お願", reading: "ねが", meaning: "いします" }
+    ] },
+  { ep: 71, title: "【單字聽聽看🎧#4】日式飯糰口味篇🍙（yuma推薦😋）｜最常用10個單字＆例句", url: "https://podcasts.apple.com/hk/podcast/ep-71-%E5%96%AE%E5%AD%97%E8%81%BD%E8%81%BD%E7%9C%8B-4-%E6%97%A5%E5%BC%8F%E9%A3%AF%E7%B3%B0%E5%8F%A3%E5%91%B3%E7%AF%87-yuma%E6%8E%A8%E8%96%A6-%E6%9C%80%E5%B8%B8%E7%94%A810%E5%80%8B%E5%96%AE%E5%AD%97-%E4%BE%8B%E5%8F%A5/id1841097463?i=1000758105908&l=en-GB", vocab: [
+      { front: "鮭", reading: "しゃけ　Shake", meaning: "鮭魚", example: "しゃけおにぎりは二番目に人気です。 （Shake onigiri wa nibanme ni ninki desu.）（鮭魚飯糰是第二受歡迎的口味）" },
+      { front: "梅", reading: "うめ　Ume", meaning: "梅子（méi zi）", example: "梅おにぎりは、シンプルですがおいしいですよ。 （Ume onigiri wa, shinpuru desu ga oishii desu yo.）（梅子飯糰雖然很簡單，但很好吃喔）" }
+    ] },
+  { ep: 72, title: "【便利商店篇③】「どうぞ（Douzo）」的3種用法一次搞懂🪄🍬" },
+  { ep: 73, title: "【回答大家的問題⑨】頭髮怎麼保養？日本人用保鮮膜包飯的訣竅😆？", vocab: [
+      { front: "想知道ラップ", reading: "保鮮膜", meaning: "包白飯的訣竅" }
+    ] },
+  { ep: 74, title: "【便利商店篇④】一起學會店員會說的第一句！いりますか？（Irimasuka?）" },
+  { ep: 75, title: "【便利商店篇⑤】日文「利用（りよう）」怎麼用？「レシートはご利用ですか？🧾」", vocab: [
+      { front: "ご利用", reading: "りよう", meaning: "ですか？：要用嗎？" }
+    ] },
+  { ep: 76, title: "【便利商店篇⑥】原來都在問「需要嗎？」お箸はお付けしますか？🥢", vocab: [
+      { front: "お付", reading: "つ", meaning: "けしますか？：要加上嗎？＝需要嗎？" },
+      { front: "付けます", reading: "tsukemasu", meaning: "＝加上" }
+    ] },
+  { ep: 77, title: "【便利商店篇⑦】集點卡是年糕嗎...不！有帶嗎？😆「お持ちですか？」", vocab: [
+      { front: "持っています", reading: "motteimasu", meaning: "有，有帶" }
+    ] },
+  { ep: 78, title: "【複習測驗】再次挑戰！在便利商店裡的實際日文會話🏪🔥" },
+  { ep: 79, title: "【公告】下週一（&今晚）會有直播活動！不要錯過喔～" },
+  { ep: 80, title: "從「我是⚪︎⚪︎」再學幾句！最自然的日文自我介紹🌷", vocab: [
+      { front: "名字", reading: "「", meaning: "です」" },
+      { front: "｜我是", reading: "名字", meaning: "「私は」可以省略！ ③ 說自己是從哪裡來的" }
+    ] },
+  { ep: 81, title: "在日本想拍照或錄影？這樣問最自然😎📹" },
+  { ep: 82, title: "全日文閒聊｜yumaの自己紹介" },
+  { ep: 83, title: "【單字聽聽看🎧#5】情緒形容詞篇🌷｜最常用10個單字＆例句", vocab: [
+      { front: "うれしい", reading: "嬉しい　Ureshii", meaning: "很高興", example: "お会いできて、嬉しいです。 （Oai dekite, ureshii desu.）（很高興認識你）" },
+      { front: "たのしい", reading: "楽しい　Tanoshii", meaning: "很開心、很好玩", example: "自炊は結構楽しいですよ🥣👩‍🌾 （Jisui wa kekkou tanoshii desuyo.）（自己做飯其實蠻好玩的喔！）" }
+    ] },
+  { ep: 84, title: "店員講的日文真的聽不懂時的最終奧義⚔️「日本語があまりわかりません（Nihongo ga amari wakarimasen）」", vocab: [
+      { front: "わかりません", reading: "wakarimasen", meaning: "不懂" }
+    ] },
+  { ep: 85, title: "【飲食店日文】日本旅行時一定要會「我有過敏」的日文！", vocab: [
+      { front: "我", reading: "：", meaning: "有～ ・蝦子過敏 ＝" },
+      { front: "えびアレルギー", reading: "Ebi arerugi-", meaning: "🦐 ・螃蟹過敏 ＝" },
+      { front: "かにアレルギー", reading: "Kani arerugi-", meaning: "🦀 ・海鮮過敏 ＝" },
+      { front: "魚介アレルギー", reading: "Gyokai arerugi-", meaning: "🐟 ・花生過敏 ＝" },
+      { front: "ピーナッツアレルギー", reading: "Pi-nattsu arerugi-", meaning: "🥜 ・堅果過敏 ＝ ナッツアレルギー" }
+    ] },
+  { ep: 86, title: "【飲食店日文】在日本吃素怎麼說？🥗" },
+  { ep: 87, title: "【飲食店日文】「我不能吃◯◯」日文怎麼說？🙉「〜が食べられません（~ga taberaremasen）」", vocab: [
+      { front: "魚", reading: "さかな　sakana", meaning: "魚🐟" }
+    ] },
+  { ep: 88, title: "【飲食店日文】「這裡面有放◯◯嗎？」日文怎麼說？過敏、吃素、不敢吃都能用！", vocab: [
+      { front: "か？", reading: "ka?", meaning: "疑問的語尾 如果助詞很難記的話，也可以先這樣說😁👇🏻 🐣：これ、◯◯、" },
+      { front: "入", reading: "はい", meaning: "ってますか？" }
+    ] },
+  { ep: 89, title: "【單字聽聽看🎧#6】飲食店篇🥤｜最常用10個單字＆例句", vocab: [
+      { front: "店内", reading: "てんない　tennai", meaning: "店内，內用", example: "店員さん：店内ご利用ですか？ （Tannai goriyou desuka?）（店員：請問您要內用嗎？）" },
+      { front: "持ち帰り", reading: "もちかえり　mochikaeri", meaning: "外帶", example: "持ち帰りでお願いします。 （Mochikaeri de onegaishimasu.）（我要外帶，謝謝）" },
+      { front: "あったかい", reading: "attakai", meaning: "溫的、熱熱的", example: "冬は毎日あったかい飲み物を飲みます。 （Fuyu wa mainichi attakai nomimono o nomimasu.）" }
+    ] },
+  { ep: 90, title: "【複習測驗｜飲食店篇①】看看你能不能在日本的星巴克成功點飲料！🥤", vocab: [
+      { front: "店内", reading: "Ep.34", meaning: "持ち帰り /" },
+      { front: "テイクアウト", reading: "Ep.34", meaning: "これひとつ、" },
+      { front: "カード", reading: "Ep.25、26", meaning: "💁🏻‍♀️ 店員會說的日文 💁🏻‍♀️ いらっしゃいませ、" },
+      { front: "でよろしいですか", reading: "這樣就好了嗎？", meaning: "お会計 600円になります（一" }
+    ] },
+  { ep: 91, title: "【複習測驗｜飲食店篇②】在大阪燒店裡，你能順利用日文表達嗎？🥴", vocab: [
+      { front: "ないですね", reading: "不好意思，沒有耶", meaning: "できますよ、氷抜きでご用" }
+    ] },
+  { ep: 92, title: "日本餐廳的茶可以續杯嗎？🍵居然真的會被拒絕！😧", vocab: [
+      { front: "お一人様", reading: "ひとりさま", meaning: "（ohito" }
+    ] },
+  { ep: 93, title: "夏季旅遊日文速成班來啦〜！🙌🏻🎆" },
+  { ep: 94, title: "夏季日文50音！用日本夏天的單字學會50音吧🌻🍧", vocab: [
+      { front: "ア｜アイス", reading: "aisu", meaning: "｜冰淇淋 🍨 （i）い" },
+      { front: "イ｜いか", reading: "ika", meaning: "｜魷魚 🦑 （u）う" },
+      { front: "ウ｜うみ", reading: "umi", meaning: "｜海 🌊 （e）え" },
+      { front: "エ｜えき", reading: "eki", meaning: "｜車站 🚉 （o）お　オ｜お" }
+    ] },
+  { ep: 95, title: "全日文閒聊｜北海道の紹介【前篇】🍛" },
+  { ep: 96, title: "全日文閒聊｜北海道のおいしいもの紹介【後編】", vocab: [
+      { front: "📍さっぽろ純連", reading: "SAPPORO JUREN", meaning: "🍜 http://www.junren.co.jp/" },
+      { front: "📍トリトン", reading: "TORITON", meaning: "🍣 https://toriton-kita1.jp/ 📍一夜干しと海鮮丼" }
+    ] }
   ];
 
   var STORAGE_KEY = "nihongo-shugyou-cho:v1";
