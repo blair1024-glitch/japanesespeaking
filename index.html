@@ -233,6 +233,7 @@
   .quiz-results-head { color: var(--ink-soft); font-weight: 700; }
   .quiz-results-row { background: var(--surface-2); }
   .quiz-results-row.wrong { background: var(--warn-soft); }
+  .quiz-results-row.partial { background: var(--accent-soft); }
   @media (max-width: 500px) { .quiz-results-head, .quiz-results-row { grid-template-columns: 1fr; gap: 2px; } .quiz-results-head { display: none; } }
 
   .toast {
@@ -568,6 +569,7 @@
   var backend = null;
   var dbApi = null;
   var downloadsApi = null;
+  var sampleApi = null;
   var activeTab = "today";
   var todayFormDate = localDateStr();
   var flashQueue = [];
@@ -575,6 +577,8 @@
   var quizMode = "choice";
   var quizEpisodeFilter = null;
   var quiz = null;
+  var aiQuiz = null;
+  var aiQuizAbortCtl = null;
   var readingOpenEpisodes = {};
 
   function localDateStr(d) {
@@ -665,6 +669,14 @@
   async function init() {
     renderTabs();
     renderContent();
+    try {
+      if (window.claude && typeof window.claude.use === "function") {
+        window.claude.use("sample").then(function (api) {
+          sampleApi = api;
+          if (activeTab === "quiz" && !quiz && !aiQuiz) renderContent();
+        }, function () { sampleApi = null; });
+      }
+    } catch (e) { sampleApi = null; }
     try {
       if (window.claude && typeof window.claude.use === "function") {
         dbApi = await window.claude.use("db");
@@ -1422,13 +1434,21 @@
         '<button class="btn btn-ghost btn-sm' + (quizMode === "choice" ? " active" : "") + '" data-mode="choice">選擇題</button>' +
         '<button class="btn btn-ghost btn-sm' + (quizMode === "typing" ? " active" : "") + '" data-mode="typing">打字題</button>' +
         '<button class="btn btn-ghost btn-sm' + (quizMode === "pattern" ? " active" : "") + '" data-mode="pattern">造句題</button>' +
+        (sampleApi ? '<button class="btn btn-ghost btn-sm' + (quizMode === "ai" ? " active" : "") + '" data-mode="ai">AI 家教</button>' : "") +
       "</div>" +
+      (sampleApi && quizMode === "ai" ? '<div class="muted">會使用你的 Claude 額度，第一次使用會詢問授權</div>' : "") +
       '<div id="quiz-area"></div>' +
       (recent.length ? '<div><div class="section-title" style="font-size:0.9rem">最近測驗紀錄</div><div style="display:flex;flex-direction:column;gap:4px">' +
         recent.map(function (q) { return '<div class="muted num">' + q.date + "　" + q.score + " / " + q.total + "</div>"; }).join("") + "</div></div>" : "") +
       "</div>";
     c.querySelectorAll(".quiz-modes [data-mode]").forEach(function (btn) {
-      btn.addEventListener("click", function () { quizMode = btn.getAttribute("data-mode"); quiz = null; renderQuizTab(c); });
+      btn.addEventListener("click", function () {
+        quizMode = btn.getAttribute("data-mode");
+        quiz = null;
+        if (aiQuizAbortCtl) { aiQuizAbortCtl.abort(); aiQuizAbortCtl = null; }
+        aiQuiz = null;
+        renderQuizTab(c);
+      });
     });
     renderQuizArea();
   }
@@ -1436,6 +1456,7 @@
   function renderQuizArea() {
     var area = document.getElementById("quiz-area");
     if (!area) return;
+    if (quizMode === "ai") { renderAiQuizArea(); return; }
     if (!quiz) {
       var cardCount = Object.keys(state.cards).length;
       if (!cardCount) {
@@ -1611,6 +1632,290 @@
       date: localDateStr(), score: quiz.correct, total: quiz.questions.length,
       mode: quizMode, wrongCardIds: quiz.wrongCardIds, createdAt: new Date().toISOString()
     });
+  }
+
+  // ---------- AI tutor quiz mode ----------
+  function aiQuizPool(epFilter) {
+    var all = Object.values(state.cards);
+    var pool = epFilter ? all.filter(function (c) { return c.sourceEpisode && c.sourceEpisode.indexOf("Ep." + epFilter + "：") === 0; }) : all;
+    var tierWeight = { weak: 0, mid: 1, strong: 2 };
+    pool = pool.slice().sort(function (a, b) {
+      var ta = tierWeight[cardTier(a)], tb = tierWeight[cardTier(b)];
+      if (ta !== tb) return ta - tb;
+      return a.srs.due < b.srs.due ? -1 : 1;
+    });
+    return pool.slice(0, 25);
+  }
+
+  function recentWrongCards(epFilter, limit) {
+    limit = limit || 3;
+    var quizzes = Object.values(state.quizzes).sort(function (a, b) {
+      return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1;
+    });
+    var seen = {};
+    var result = [];
+    for (var i = 0; i < quizzes.length && result.length < limit; i++) {
+      var ids = quizzes[i].wrongCardIds || [];
+      for (var j = 0; j < ids.length && result.length < limit; j++) {
+        var id = ids[j];
+        if (seen[id]) continue;
+        seen[id] = true;
+        var card = state.cards[id];
+        if (!card) continue;
+        if (epFilter && (!card.sourceEpisode || card.sourceEpisode.indexOf("Ep." + epFilter + "：") !== 0)) continue;
+        result.push(card);
+      }
+    }
+    return result;
+  }
+
+  function tierLabel(tier) { return tier === "strong" ? "熟悉" : tier === "mid" ? "穩定中" : "待加強"; }
+
+  function buildAiGenerationPrompt(pool, recentWrong) {
+    var lines = pool.map(function (c) {
+      return String(c.front || "").slice(0, 80) + "｜" + String(c.reading || "").slice(0, 80) + "｜" + String(c.meaning || "").slice(0, 80) + "｜" + tierLabel(cardTier(c)) + "｜id:" + c.id;
+    }).join("\n");
+    var wrongText = recentWrong.length
+      ? recentWrong.map(function (c) { return String(c.front || "").slice(0, 40) + "（id:" + c.id + "）"; }).join("、")
+      : "（無）";
+    return "你是Podcast「無壓力學日文 with yuma」的助教，幫學生用他自己記錄的單字複習日文。" +
+      "請用溫暖、無壓力的語氣，出 5 題左右的小測驗，繁體中文出題，題型混合「看日文猜意思」「看中文寫日文或羅馬拼音」「造句」，" +
+      "不要出選擇題、不要給任何選項，每題只問一件事，題目要簡短口語化。\n\n" +
+      "學生的單字庫（格式：日文｜讀音｜意思｜熟悉度｜id）：\n" + lines + "\n\n" +
+      "學生最近測驗答錯或不熟的字：" + wrongText + "（如果有，可以挑一個做突襲複習）\n\n" +
+      "請只回覆下面這個 JSON 格式，不要有其他文字、不要用 markdown code fence（大約5題）：\n" +
+      '[{"id":"q1","question":"題目文字","targetCardId":"對應學生單字庫裡的id，若非針對特定單字可留空字串"}]';
+  }
+
+  function validateAiQuestions(raw, pool) {
+    if (!Array.isArray(raw)) return null;
+    var poolIds = {};
+    pool.forEach(function (c) { poolIds[c.id] = true; });
+    var out = [];
+    raw.forEach(function (item, i) {
+      if (!item || typeof item.question !== "string" || !item.question.trim()) return;
+      var targetCardId = typeof item.targetCardId === "string" && poolIds[item.targetCardId] ? item.targetCardId : null;
+      out.push({ id: typeof item.id === "string" && item.id ? item.id : ("q" + (i + 1)), question: item.question.trim(), targetCardId: targetCardId });
+    });
+    return out.length >= 3 ? out : null;
+  }
+
+  function buildAiGradingPrompt(questions, answers, recentWrong) {
+    var lines = questions.map(function (q) {
+      var card = q.targetCardId ? state.cards[q.targetCardId] : null;
+      var ref = card ? (card.front + "／" + (card.reading || "") + "／" + card.meaning) : "（沒有特定標準答案，請合理判斷）";
+      return "題目" + q.id + "：" + q.question + "\n正確資訊：" + ref + "\n學生作答：" + (answers[q.id] && answers[q.id].trim() ? answers[q.id].trim() : "（空白）");
+    }).join("\n\n");
+    var wrongText = recentWrong.length ? recentWrong.map(function (c) { return c.front; }).join("、") : "（無）";
+    return "你是Podcast「無壓力學日文 with yuma」的助教，請批改學生剛剛的小測驗，語氣親切、無壓力。" +
+      "會具體指出小拼字錯誤（例如少一個字母、長音拼錯），但不要因為小拼字錯誤就整題判成 wrong——這種情況請判 partial。\n\n" +
+      lines + "\n\n" +
+      "這位學生最近比較不熟的字：" + wrongText + "（如果這次測驗有考到，且這次答對了，請在總結特別提到他的進步）\n\n" +
+      "請針對每一題給 verdict（只能是 correct 完全對／partial 意思對但有小瑕疵／wrong 答錯或空白）跟一句話中文說明，" +
+      "最後寫一段不超過3句、有溫度的總結評語。\n\n" +
+      "請只回覆下面這個 JSON 格式，不要有其他文字、不要用 markdown code fence：\n" +
+      '{"results":[{"id":"q1","verdict":"correct","note":"一句話"}],"summary":"總結評語文字"}';
+  }
+
+  function validateAiGrading(raw, questions) {
+    if (!raw || typeof raw !== "object" || !Array.isArray(raw.results)) return null;
+    var qIds = {};
+    questions.forEach(function (q) { qIds[q.id] = true; });
+    var validVerdicts = { correct: true, partial: true, wrong: true };
+    var results = [];
+    raw.results.forEach(function (r) {
+      if (!r || typeof r.id !== "string" || !qIds[r.id]) return;
+      if (!validVerdicts[r.verdict]) return;
+      results.push({ id: r.id, verdict: r.verdict, note: typeof r.note === "string" ? r.note : "" });
+    });
+    if (results.length < Math.ceil(questions.length / 2)) return null;
+    var summary = typeof raw.summary === "string" && raw.summary.trim() ? raw.summary.trim() : "";
+    return { results: results, summary: summary };
+  }
+
+  function aiErrorMessage(code) {
+    if (code === "prompt_too_large") return "題目資料量過大，請縮小測驗範圍再試";
+    if (code === "rate_limited") return "AI 老師有點忙，稍等一下再試";
+    if (code === "session_expired") return "登入狀態過期了，請重新整理頁面";
+    if (code === "refused" || code === "empty_completion" || code === "invalid_json") return "AI 這次沒有給出可用的回覆，請再試一次";
+    if (code === "upstream_error") return "暫時連不上，請稍後再試";
+    return "發生問題，請再試一次";
+  }
+
+  var AI_HIDE_CODES = ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"];
+
+  function hideAiTutorFeature() {
+    sampleApi = null;
+    if (quizMode === "ai") quizMode = "choice";
+    if (activeTab === "quiz") renderContent();
+  }
+
+  function startAiQuiz() {
+    if (!sampleApi) return;
+    var pool = aiQuizPool(quizEpisodeFilter);
+    if (!pool.length) {
+      toast("這個範圍還沒有單字卡，先去新增一些吧");
+      return;
+    }
+    var recentWrong = recentWrongCards(quizEpisodeFilter, 3);
+    aiQuiz = { phase: "generating", questions: [], answers: {}, results: [], summary: "" };
+    renderAiQuizArea();
+    var myQuiz = aiQuiz;
+    aiQuizAbortCtl = new AbortController();
+    var prompt = buildAiGenerationPrompt(pool, recentWrong);
+    sampleApi.json(prompt, { modelTier: "quick", cache: false, signal: aiQuizAbortCtl.signal }).then(function (raw) {
+      if (aiQuiz !== myQuiz) return;
+      var questions = validateAiQuestions(raw, pool);
+      if (!questions) {
+        toast("AI 出題格式有點問題，請再試一次");
+        aiQuiz = null;
+        renderAiQuizArea();
+        return;
+      }
+      aiQuiz.questions = questions;
+      aiQuiz.phase = "answering";
+      renderAiQuizArea();
+    }, function (e) {
+      if (aiQuiz !== myQuiz) return;
+      if (e.code === "cancelled") return;
+      if (AI_HIDE_CODES.indexOf(e.code) !== -1) {
+        aiQuiz = null;
+        hideAiTutorFeature();
+        return;
+      }
+      toast(aiErrorMessage(e.code));
+      aiQuiz = null;
+      renderAiQuizArea();
+    });
+  }
+
+  function submitAiQuizAnswers() {
+    if (!aiQuiz || aiQuiz.phase !== "answering") return;
+    document.querySelectorAll("#quiz-area [data-qid]").forEach(function (el) {
+      aiQuiz.answers[el.getAttribute("data-qid")] = el.value;
+    });
+    var recentWrong = recentWrongCards(quizEpisodeFilter, 3);
+    var prompt = buildAiGradingPrompt(aiQuiz.questions, aiQuiz.answers, recentWrong);
+    aiQuiz.phase = "grading";
+    renderAiQuizArea();
+    var myQuiz = aiQuiz;
+    aiQuizAbortCtl = new AbortController();
+    sampleApi.json(prompt, { modelTier: "default", cache: false, signal: aiQuizAbortCtl.signal }).then(function (raw) {
+      if (aiQuiz !== myQuiz) return;
+      var validated = validateAiGrading(raw, aiQuiz.questions);
+      if (!validated) {
+        toast("AI 批改格式有點問題，請再試一次");
+        aiQuiz.phase = "answering";
+        renderAiQuizArea();
+        return;
+      }
+      finalizeAiQuiz(aiQuiz, validated);
+      aiQuiz.results = validated.results;
+      aiQuiz.summary = validated.summary;
+      aiQuiz.phase = "results";
+      renderAiQuizArea();
+    }, function (e) {
+      if (aiQuiz !== myQuiz) return;
+      if (e.code === "cancelled") return;
+      if (AI_HIDE_CODES.indexOf(e.code) !== -1) {
+        hideAiTutorFeature();
+        aiQuiz = null;
+        return;
+      }
+      toast(aiErrorMessage(e.code));
+      aiQuiz.phase = "answering";
+      renderAiQuizArea();
+    });
+  }
+
+  function finalizeAiQuiz(aiQuizObj, validated) {
+    var score = 0;
+    var wrongCardIds = [];
+    validated.results.forEach(function (r) {
+      if (r.verdict === "correct") score += 1;
+      else if (r.verdict === "partial") score += 0.5;
+      var q = aiQuizObj.questions.filter(function (qq) { return qq.id === r.id; })[0];
+      var card = q && q.targetCardId ? state.cards[q.targetCardId] : null;
+      if (card) {
+        var updated = applySrsGrade(card, r.verdict === "wrong" ? "again" : "good");
+        writeDoc("cards", card.id, updated);
+        if (r.verdict !== "correct") wrongCardIds.push(card.id);
+      }
+    });
+    var id = genId();
+    writeDoc("quizzes", id, {
+      date: localDateStr(), score: score, total: validated.results.length,
+      mode: "ai", wrongCardIds: wrongCardIds, createdAt: new Date().toISOString()
+    });
+  }
+
+  function renderAiQuizArea() {
+    var area = document.getElementById("quiz-area");
+    if (!area) return;
+    if (!sampleApi) {
+      area.innerHTML = '<div class="empty-state">這個環境沒辦法使用 AI 家教</div>';
+      return;
+    }
+    if (!aiQuiz) {
+      var epOptions = episodesWithCards();
+      area.innerHTML =
+        (epOptions.length ? '<div class="field" style="max-width:280px;margin:0 auto 4px">' +
+          '<label for="quiz-episode-filter">測驗範圍</label>' +
+          '<select id="quiz-episode-filter"><option value="">全部單字卡</option>' +
+          epOptions.map(function (e) {
+            return '<option value="' + e.ep + '"' + (quizEpisodeFilter === e.ep ? " selected" : "") + '>Ep.' + e.ep + '：' + escapeHtml(e.title) + "</option>";
+          }).join("") +
+          "</select></div>" : "") +
+        '<button class="btn btn-primary" id="start-ai-quiz">開始新測驗（AI 家教）</button>';
+      if (epOptions.length) {
+        document.getElementById("quiz-episode-filter").addEventListener("change", function (e) { quizEpisodeFilter = e.target.value || null; });
+      }
+      document.getElementById("start-ai-quiz").addEventListener("click", startAiQuiz);
+      return;
+    }
+    if (aiQuiz.phase === "generating") {
+      area.innerHTML = '<div class="empty-state"><div style="font-size:1.6rem">🎓</div><div>Yuma老師出題中...</div></div>';
+      return;
+    }
+    if (aiQuiz.phase === "grading") {
+      area.innerHTML = '<div class="empty-state"><div style="font-size:1.6rem">🎓</div><div>Yuma老師批改中...</div></div>';
+      return;
+    }
+    if (aiQuiz.phase === "answering") {
+      area.innerHTML =
+        '<div style="display:flex;flex-direction:column;gap:14px">' +
+        aiQuiz.questions.map(function (q, i) {
+          return '<div class="field"><label>Q' + (i + 1) + "　" + escapeHtml(q.question) + "</label>" +
+            '<textarea data-qid="' + escapeHtml(q.id) + '" class="jp" placeholder="打出你的答案" rows="2">' + escapeHtml(aiQuiz.answers[q.id] || "") + "</textarea></div>";
+        }).join("") +
+        '<button class="btn btn-primary" id="submit-ai-quiz">送出，請老師批改</button>' +
+        "</div>";
+      document.getElementById("submit-ai-quiz").addEventListener("click", submitAiQuizAnswers);
+      return;
+    }
+    if (aiQuiz.phase === "results") {
+      var total = aiQuiz.results.length;
+      var scoreDisplay = aiQuiz.results.reduce(function (s, r) { return s + (r.verdict === "correct" ? 1 : r.verdict === "partial" ? 0.5 : 0); }, 0);
+      var verdictIcon = { correct: "✅", partial: "🟡", wrong: "❌" };
+      area.innerHTML =
+        '<div class="empty-state"><div style="font-size:1.8rem">' + (scoreDisplay === total ? "🏆" : "📝") + '</div>' +
+        '<div style="font-size:1.3rem;font-weight:700" class="num">' + scoreDisplay + " / " + total + "</div>" +
+        (aiQuiz.summary ? '<div class="muted" style="max-width:420px">' + escapeHtml(aiQuiz.summary) + "</div>" : "") +
+        '<div class="quiz-results">' +
+          '<div class="quiz-results-head"><div>題目</div><div>你的答案</div><div>結果</div></div>' +
+          aiQuiz.results.map(function (r) {
+            var q = aiQuiz.questions.filter(function (qq) { return qq.id === r.id; })[0];
+            return '<div class="quiz-results-row' + (r.verdict === "wrong" ? " wrong" : r.verdict === "partial" ? " partial" : "") + '">' +
+              '<div class="jp">' + escapeHtml(q ? q.question : "") + "</div>" +
+              "<div>" + escapeHtml(aiQuiz.answers[r.id] || "（空白）") + "</div>" +
+              "<div>" + (verdictIcon[r.verdict] || "") + (r.note ? '<div class="muted" style="font-size:0.76rem">' + escapeHtml(r.note) + "</div>" : "") + "</div>" +
+              "</div>";
+          }).join("") +
+        "</div>" +
+        '<button class="btn btn-primary" id="ai-quiz-again" style="margin-top:6px">再測一次</button></div>';
+      document.getElementById("ai-quiz-again").addEventListener("click", function () { aiQuiz = null; renderAiQuizArea(); });
+      return;
+    }
   }
 
   // ---------- Stats tab ----------
