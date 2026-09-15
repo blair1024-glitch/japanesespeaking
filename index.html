@@ -202,6 +202,13 @@
   .grade-good { color: var(--accent-strong); }
   .grade-easy { color: var(--good); }
 
+  .memory-tier { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); }
+  .memory-tier-label { font-weight: 700; font-size: 0.85rem; }
+  .memory-tier-words { display: flex; flex-wrap: wrap; gap: 5px; }
+  .memory-tier.tier-weak .memory-tier-label { color: var(--warn); }
+  .memory-tier.tier-mid .memory-tier-label { color: var(--accent-strong); }
+  .memory-tier.tier-strong .memory-tier-label { color: var(--good); }
+
   .card-manager-table { display: flex; flex-direction: column; gap: 6px; }
   .cm-row { display: grid; grid-template-columns: 1.1fr 1fr 1.4fr 0.9fr auto; gap: 8px; align-items: center; padding: 10px 12px; background: var(--surface-2); border-radius: 14px; font-size: 0.85rem; }
   .cm-row [contenteditable="true"] { padding: 3px 6px; border-radius: 8px; }
@@ -221,6 +228,12 @@
   .typing-feedback { border-radius: 14px; padding: 12px 16px; font-size: 0.9rem; }
   .typing-feedback.ok { background: var(--good-soft); color: var(--good); }
   .typing-feedback.no { background: var(--warn-soft); color: var(--warn); }
+  .quiz-results { display: flex; flex-direction: column; gap: 4px; text-align: left; margin-top: 14px; width: 100%; max-width: 480px; }
+  .quiz-results-head, .quiz-results-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 8px; padding: 7px 10px; border-radius: 10px; font-size: 0.82rem; align-items: center; }
+  .quiz-results-head { color: var(--ink-soft); font-weight: 700; }
+  .quiz-results-row { background: var(--surface-2); }
+  .quiz-results-row.wrong { background: var(--warn-soft); }
+  @media (max-width: 500px) { .quiz-results-head, .quiz-results-row { grid-template-columns: 1fr; gap: 2px; } .quiz-results-head { display: none; } }
 
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -560,6 +573,7 @@
   var flashQueue = [];
   var flashIndex = 0;
   var quizMode = "choice";
+  var quizEpisodeFilter = null;
   var quiz = null;
   var readingOpenEpisodes = {};
 
@@ -645,7 +659,7 @@
     if (activeTab === "reading") renderReadingList();
     if (activeTab === "review") renderReview();
     if (activeTab === "stats") renderStats();
-    if (activeTab === "cards") renderCardManagerOnly();
+    if (activeTab === "cards") { renderMemoryOverview(); renderCardManagerOnly(); }
   }
 
   async function init() {
@@ -738,6 +752,12 @@
     var today = localDateStr();
     return Object.values(state.cards).filter(function (c) { return c.srs.due <= today; })
       .sort(function (a, b) { return a.srs.due < b.srs.due ? -1 : 1; });
+  }
+
+  function cardTier(card) {
+    if (card.srs.reps === 0 || card.srs.interval < 3) return "weak";
+    if (card.srs.interval < 21) return "mid";
+    return "strong";
   }
 
   function applySrsGrade(card, grade) {
@@ -1170,6 +1190,7 @@
     flashIndex = 0;
     c.innerHTML =
       '<div style="display:flex;flex-direction:column;gap:20px">' +
+      '<div id="memory-overview"></div>' +
       '<div>' +
         '<div class="section-title">單字卡複習</div>' +
         '<div class="muted" id="due-summary"></div>' +
@@ -1181,8 +1202,35 @@
         '<div id="card-manager"></div>' +
       "</div>" +
       "</div>";
+    renderMemoryOverview();
     renderFlashArea();
     renderCardManagerOnly();
+  }
+  function renderMemoryOverview() {
+    var mount = document.getElementById("memory-overview");
+    if (!mount) return;
+    var cards = Object.values(state.cards);
+    if (!cards.length) { mount.innerHTML = ""; return; }
+    var groups = { strong: [], mid: [], weak: [] };
+    cards.forEach(function (c) { groups[cardTier(c)].push(c); });
+    var tiers = [
+      { key: "strong", emoji: "🟢", label: "熟悉", cls: "tier-strong" },
+      { key: "mid", emoji: "🟡", label: "穩定中", cls: "tier-mid" },
+      { key: "weak", emoji: "🔴", label: "待加強", cls: "tier-weak" }
+    ];
+    mount.innerHTML =
+      '<div class="section-title" style="font-size:0.95rem">單字記憶狀態總覽</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">' +
+      tiers.map(function (t) {
+        var list = groups[t.key];
+        if (!list.length) return "";
+        return '<div class="memory-tier ' + t.cls + '">' +
+          '<div class="memory-tier-label">' + t.emoji + " " + t.label + "（" + list.length + "）</div>" +
+          '<div class="memory-tier-words">' + list.map(function (c) {
+            return '<span class="chip" title="' + escapeHtml(c.meaning) + '">' + escapeHtml(c.front) + "</span>";
+          }).join("") + "</div></div>";
+      }).join("") +
+      "</div>";
   }
   function renderCardManagerOnly() {
     var mount = document.getElementById("card-manager");
@@ -1298,16 +1346,53 @@
   }
 
   // ---------- Quiz tab ----------
-  function buildQuiz(n, mode) {
+  function episodesWithCards() {
+    var seen = {};
+    var list = [];
+    Object.values(state.cards).forEach(function (c) {
+      var m = /^Ep\.(\d+)：(.*)$/.exec(c.sourceEpisode || "");
+      if (!m || seen[m[1]]) return;
+      seen[m[1]] = true;
+      list.push({ ep: m[1], title: m[2] });
+    });
+    list.sort(function (a, b) { return parseInt(a.ep, 10) - parseInt(b.ep, 10); });
+    return list;
+  }
+
+  function cardHasPattern(card) {
+    return /[○◯⚪]/.test(card.front) || /[○◯⚪]/.test(card.reading || "");
+  }
+  function patternTemplate(card) {
+    return /[○◯⚪]/.test(card.reading || "") ? card.reading : card.front;
+  }
+  function checkPatternAnswer(template, answer) {
+    var parts = template.split(/[○◯⚪]+/).map(function (s) { return normalize(s); }).filter(function (s) { return s.length; });
+    var normAnswer = normalize(answer);
+    var idx = 0;
+    for (var i = 0; i < parts.length; i++) {
+      var found = normAnswer.indexOf(parts[i], idx);
+      if (found === -1) return false;
+      idx = found + parts[i].length;
+    }
+    return true;
+  }
+
+  function buildQuiz(n, mode, epFilter) {
     var all = Object.values(state.cards);
-    if (all.length < 4) return null;
+    var pool = epFilter ? all.filter(function (c) { return c.sourceEpisode && c.sourceEpisode.indexOf("Ep." + epFilter + "：") === 0; }) : all;
+    if (mode === "pattern") pool = pool.filter(cardHasPattern);
+    if (!pool.length) return null;
+    if (mode === "choice" && all.length < 4) return null;
     var today = localDateStr();
-    var due = all.filter(function (c) { return c.srs.due <= today; });
-    var pool = due.length >= n ? shuffle(due).slice(0, n) : (function () {
-      var rest = shuffle(all.filter(function (c) { return due.indexOf(c) === -1; }));
-      return shuffle(due.concat(rest)).slice(0, Math.min(n, all.length));
+    var due = pool.filter(function (c) { return c.srs.due <= today; });
+    var selected = due.length >= n ? shuffle(due).slice(0, n) : (function () {
+      var rest = shuffle(pool.filter(function (c) { return due.indexOf(c) === -1; }));
+      return shuffle(due.concat(rest)).slice(0, Math.min(n, pool.length));
     })();
-    return pool.map(function (card) {
+    return selected.map(function (card) {
+      if (mode === "pattern") {
+        return { cardId: card.id, type: "pattern", front: card.front, meaning: card.meaning, template: patternTemplate(card) };
+      }
       if (mode === "typing") {
         var askFront = Math.random() < 0.5;
         return {
@@ -1324,6 +1409,10 @@
     });
   }
 
+  function modeLabel(mode) {
+    return mode === "typing" ? "打字題" : mode === "pattern" ? "造句題" : "選擇題";
+  }
+
   function renderQuizTab(c) {
     var recent = Object.values(state.quizzes).sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 5);
     c.innerHTML =
@@ -1332,6 +1421,7 @@
       '<div class="quiz-modes">' +
         '<button class="btn btn-ghost btn-sm' + (quizMode === "choice" ? " active" : "") + '" data-mode="choice">選擇題</button>' +
         '<button class="btn btn-ghost btn-sm' + (quizMode === "typing" ? " active" : "") + '" data-mode="typing">打字題</button>' +
+        '<button class="btn btn-ghost btn-sm' + (quizMode === "pattern" ? " active" : "") + '" data-mode="pattern">造句題</button>' +
       "</div>" +
       '<div id="quiz-area"></div>' +
       (recent.length ? '<div><div class="section-title" style="font-size:0.9rem">最近測驗紀錄</div><div style="display:flex;flex-direction:column;gap:4px">' +
@@ -1348,14 +1438,31 @@
     if (!area) return;
     if (!quiz) {
       var cardCount = Object.keys(state.cards).length;
-      if (cardCount < 4) {
-        area.innerHTML = '<div class="empty-state">至少要有 4 張單字卡才能開始測驗，目前有 ' + cardCount + " 張，先去「今日紀錄」多新增一些吧</div>";
+      if (!cardCount) {
+        area.innerHTML = '<div class="empty-state">還沒有任何單字卡，先去「今日紀錄」或「閱讀」新增一些吧</div>';
         return;
       }
-      area.innerHTML = '<button class="btn btn-primary" id="start-quiz">開始新測驗（' + (quizMode === "typing" ? "打字題" : "選擇題") + "）</button>";
+      if (quizMode === "choice" && cardCount < 4) {
+        area.innerHTML = '<div class="empty-state">選擇題至少要有 4 張單字卡，目前有 ' + cardCount + ' 張，可以先試試打字題或造句題</div>';
+        return;
+      }
+      var epOptions = episodesWithCards();
+      area.innerHTML =
+        (epOptions.length ? '<div class="field" style="max-width:280px;margin:0 auto 4px">' +
+          '<label for="quiz-episode-filter">測驗範圍</label>' +
+          '<select id="quiz-episode-filter"><option value="">全部單字卡</option>' +
+          epOptions.map(function (e) {
+            return '<option value="' + e.ep + '"' + (quizEpisodeFilter === e.ep ? " selected" : "") + '>Ep.' + e.ep + '：' + escapeHtml(e.title) + "</option>";
+          }).join("") +
+          "</select></div>" : "") +
+        '<button class="btn btn-primary" id="start-quiz">開始新測驗（' + modeLabel(quizMode) + '）</button>';
+      if (epOptions.length) {
+        document.getElementById("quiz-episode-filter").addEventListener("change", function (e) { quizEpisodeFilter = e.target.value || null; });
+      }
       document.getElementById("start-quiz").addEventListener("click", function () {
-        var questions = buildQuiz(10, quizMode);
-        quiz = { questions: questions, index: 0, correct: 0, wrongCardIds: [], grades: {} };
+        var questions = buildQuiz(10, quizMode, quizEpisodeFilter);
+        if (!questions) { toast("這個範圍找不到足夠的單字卡，換個範圍或模式試試"); return; }
+        quiz = { questions: questions, index: 0, correct: 0, wrongCardIds: [], grades: {}, results: [] };
         renderQuizArea();
       });
       return;
@@ -1366,7 +1473,17 @@
       area.innerHTML =
         '<div class="empty-state"><div style="font-size:1.8rem">' + (quiz.correct === total ? "🏆" : "📝") + '</div>' +
         '<div style="font-size:1.3rem;font-weight:700" class="num">' + quiz.correct + " / " + total + "</div>" +
-        '<button class="btn btn-primary" id="quiz-again">再測一次</button></div>';
+        '<div class="quiz-results">' +
+          '<div class="quiz-results-head"><div>題目</div><div>你的答案</div><div>結果</div></div>' +
+          quiz.results.map(function (r) {
+            return '<div class="quiz-results-row' + (r.correct ? "" : " wrong") + '">' +
+              '<div class="jp">' + escapeHtml(r.prompt) + "</div>" +
+              "<div>" + escapeHtml(r.yourAnswer || "（空白）") + "</div>" +
+              "<div>" + (r.correct ? "✅" : "❌ " + escapeHtml(r.correctAnswer)) + "</div>" +
+              "</div>";
+          }).join("") +
+        "</div>" +
+        '<button class="btn btn-primary" id="quiz-again" style="margin-top:6px">再測一次</button></div>';
       document.getElementById("quiz-again").addEventListener("click", function () { quiz = null; renderQuizArea(); });
       return;
     }
@@ -1381,6 +1498,19 @@
       area.querySelectorAll(".quiz-option").forEach(function (btn) {
         btn.addEventListener("click", function () { answerChoice(q, btn.getAttribute("data-opt")); });
       });
+    } else if (q.type === "pattern") {
+      area.innerHTML = progress +
+        '<div class="quiz-q-jp">' + escapeHtml(q.meaning) + "</div>" +
+        '<div class="muted" style="text-align:center;margin-top:-8px">提示：' + escapeHtml(q.front) + "</div>" +
+        '<div style="display:flex;flex-direction:column;gap:10px;max-width:420px;margin:12px auto 0">' +
+        '<input type="text" id="typing-input" class="jp" placeholder="請打出完整句子，可以用自己的內容替換○○" style="background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px">' +
+        '<button class="btn btn-primary" id="typing-submit">提交答案</button>' +
+        '<div id="typing-feedback"></div>' +
+        "</div>";
+      var patternInput = document.getElementById("typing-input");
+      patternInput.focus();
+      patternInput.addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("typing-submit").click(); });
+      document.getElementById("typing-submit").addEventListener("click", function () { answerPattern(q, patternInput.value); });
     } else {
       area.innerHTML = progress +
         '<div class="quiz-q-jp">' + escapeHtml(q.prompt) + "</div>" +
@@ -1404,7 +1534,7 @@
       if (val === q.answer) btn.classList.add("correct");
       else if (val === chosen) btn.classList.add("wrong");
     });
-    recordAnswer(q, correct);
+    recordAnswer(q, correct, chosen);
     setTimeout(function () { quiz.index++; renderQuizArea(); }, 900);
   }
 
@@ -1418,7 +1548,7 @@
     if (correct) {
       fb.innerHTML = '<div class="typing-feedback ok">✔️ 答對了！正確答案：' + escapeHtml(q.answer) + "</div>" +
         '<button class="btn btn-primary" id="typing-next" style="margin-top:10px">下一題</button>';
-      recordAnswer(q, true);
+      recordAnswer(q, true, typed);
       document.getElementById("typing-next").addEventListener("click", function () { quiz.index++; renderQuizArea(); });
     } else {
       fb.innerHTML =
@@ -1427,16 +1557,44 @@
         '<button class="btn btn-ghost btn-sm" id="mark-correct">其實我答對了</button>' +
         '<button class="btn btn-primary btn-sm" id="mark-wrong">算我錯，下一題</button>' +
         "</div>";
-      document.getElementById("mark-correct").addEventListener("click", function () { recordAnswer(q, true); quiz.index++; renderQuizArea(); });
-      document.getElementById("mark-wrong").addEventListener("click", function () { recordAnswer(q, false); quiz.index++; renderQuizArea(); });
+      document.getElementById("mark-correct").addEventListener("click", function () { recordAnswer(q, true, typed); quiz.index++; renderQuizArea(); });
+      document.getElementById("mark-wrong").addEventListener("click", function () { recordAnswer(q, false, typed); quiz.index++; renderQuizArea(); });
     }
   }
 
-  function recordAnswer(q, correct) {
+  function answerPattern(q, typed) {
+    var correct = checkPatternAnswer(q.template, typed);
+    var fb = document.getElementById("typing-feedback");
+    document.getElementById("typing-submit").disabled = true;
+    document.getElementById("typing-input").disabled = true;
+    if (correct) {
+      fb.innerHTML = '<div class="typing-feedback ok">✔️ 答對了！</div>' +
+        '<button class="btn btn-primary" id="typing-next" style="margin-top:10px">下一題</button>';
+      recordAnswer(q, true, typed);
+      document.getElementById("typing-next").addEventListener("click", function () { quiz.index++; renderQuizArea(); });
+    } else {
+      fb.innerHTML =
+        '<div class="typing-feedback no">你的答案：' + escapeHtml(typed || "（空白）") + '　／　句型參考：' + escapeHtml(q.template) + "</div>" +
+        '<div style="display:flex;gap:8px;margin-top:10px">' +
+        '<button class="btn btn-ghost btn-sm" id="mark-correct">其實我答對了</button>' +
+        '<button class="btn btn-primary btn-sm" id="mark-wrong">算我錯，下一題</button>' +
+        "</div>";
+      document.getElementById("mark-correct").addEventListener("click", function () { recordAnswer(q, true, typed); quiz.index++; renderQuizArea(); });
+      document.getElementById("mark-wrong").addEventListener("click", function () { recordAnswer(q, false, typed); quiz.index++; renderQuizArea(); });
+    }
+  }
+
+  function recordAnswer(q, correct, yourAnswer) {
     if (quiz.grades[q.cardId] !== undefined) return;
     quiz.grades[q.cardId] = correct;
     if (correct) quiz.correct++;
     else quiz.wrongCardIds.push(q.cardId);
+    quiz.results.push({
+      prompt: q.type === "choice" ? q.front : (q.type === "pattern" ? q.meaning : q.prompt),
+      yourAnswer: yourAnswer,
+      correctAnswer: q.type === "pattern" ? q.template : q.answer,
+      correct: correct
+    });
   }
 
   function finalizeQuiz() {
